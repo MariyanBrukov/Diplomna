@@ -1,0 +1,83 @@
+﻿@model IEnumerable<Demo.Models.Build>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.BuildName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CPU)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GPU)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Motherboard)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RAM)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Storage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PowerSupply)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Case)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalPrice)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.BuildName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CPU.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GPU.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Motherboard.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RAM.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Storage.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PowerSupply.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Case.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalPrice)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
