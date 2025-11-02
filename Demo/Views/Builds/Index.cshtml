@@ -1,83 +1,48 @@
 ﻿@model IEnumerable<Demo.Models.Build>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Builds";
 }
 
-<h1>Index</h1>
+<h2 class="page-title">All Builds</h2>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.BuildName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CPU)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GPU)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Motherboard)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RAM)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Storage)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PowerSupply)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Case)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TotalPrice)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.BuildName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CPU.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GPU.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Motherboard.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RAM.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Storage.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PowerSupply.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Case.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TotalPrice)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="builds-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+    @foreach (var build in Model)
+    {
+        <div class="build-card" style="background-color: #fff; border-radius: 10px; padding: 1.5rem; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.2s;">
+            <h3 style="margin-top: 0;">@build.BuildName</h3>
+            <ul style="list-style: none; padding: 0; line-height: 1.6;">
+                <li><strong>CPU:</strong> @build.CPU?.Name</li>
+                <li><strong>GPU:</strong> @build.GPU?.Name</li>
+                <li><strong>Motherboard:</strong> @build.Motherboard?.Name</li>
+                <li><strong>RAM:</strong> @build.RAM?.Name</li>
+                <li><strong>Storage:</strong> @build.Storage?.Name</li>
+                <li><strong>Power Supply:</strong> @build.PowerSupply?.Name</li>
+                <li><strong>Case:</strong> @build.Case?.Name</li>
+            </ul>
+            <p style="font-weight: bold; font-size: 1.1rem; margin-top: 1rem;">Total Price: @build.TotalPrice.ToString("C")</p>
+            <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                <a asp-action="Edit" asp-route-id="@build.Id" style="flex:1; text-align:center; background-color:#2f3b52; color:white; padding:0.5rem; border-radius:5px; text-decoration:none;">Edit</a>
+                <a asp-action="Details" asp-route-id="@build.Id" style="flex:1; text-align:center; background-color:#3d4d6a; color:white; padding:0.5rem; border-radius:5px; text-decoration:none;">Details</a>
+                <form asp-action="Delete" asp-route-id="@build.Id" method="post" style="flex:1;">
+                    <button type="submit" style="width:100%; background-color:#e63946; color:white; padding:0.5rem; border:none; border-radius:5px; cursor:pointer;">Delete</button>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+<a asp-action="Create" style="display:inline-block; margin-top:2rem; background-color:#1d3557; color:white; padding:0.7rem 1.5rem; border-radius:8px; text-decoration:none;">Create New Build</a>
+
+<style>
+    .build-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
+
+    .page-title {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+        color: #1d3557;
+    }
+</style>

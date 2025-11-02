@@ -1,0 +1,37 @@
+﻿@model Demo.Models.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<section style="max-width: 400px; margin: 5rem auto; padding: 2rem; background-color:#f3f4f6; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+    <h2 style="text-align:center; color:#2f3b52; margin-bottom:1.5rem;">Login</h2>
+
+    <form asp-action="Login" method="post">
+        <div style="margin-bottom:1rem;">
+            <label asp-for="Email"></label>
+            <input asp-for="Email" class="form-control" style="width:100%; padding:0.6rem; border-radius:6px; border:1px solid #ccc;" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div style="margin-bottom:1rem;">
+            <label asp-for="Password"></label>
+            <input asp-for="Password" type="password" class="form-control" style="width:100%; padding:0.6rem; border-radius:6px; border:1px solid #ccc;" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+
+        <button type="submit" style="width:100%; padding:0.8rem; background-color:#2f3b52; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer; transition:0.2s;">
+            Login
+        </button>
+    </form>
+
+    <p style="margin-top:1rem; text-align:center;">
+        Don't have an account? <a asp-action="Register" style="color:#2f3b52;">Register here</a>
+    </p>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

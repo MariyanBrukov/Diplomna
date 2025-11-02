@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client.Extensions.Msal;
-using System.Runtime.Intrinsics.Arm;
+using Demo.Models; // Make sure this namespace contains User, Build, Contact, etc.
 
 namespace Demo.Models
 {
@@ -11,6 +10,7 @@ namespace Demo.Models
         {
         }
 
+        // Existing DbSets
         public DbSet<CPU> CPUs { get; set; }
         public DbSet<GPU> GPUs { get; set; }
         public DbSet<Motherboard> Motherboards { get; set; }
@@ -21,9 +21,13 @@ namespace Demo.Models
         public DbSet<Build> Builds { get; set; }
         public DbSet<Contact> Contacts { get; set; }
 
+        // ✅ Add the User DbSet
+        public DbSet<User> Users { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
 
             // ✅ SEED DATA — these will automatically populate the database
 
