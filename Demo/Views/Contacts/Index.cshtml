@@ -1,53 +1,131 @@
 ﻿@model IEnumerable<Demo.Models.Contact>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Contacts";
 }
 
-<h1>Index</h1>
+<style>
+    body {
+        background-color: #1e2a38;
+        color: #e0e0e0;
+        font-family: 'Segoe UI', sans-serif;
+    }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Subject)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Message)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Subject)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Message)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    h1 {
+        text-align: center;
+        color: #9cc4ff;
+        margin-top: 1rem;
+        letter-spacing: 1px;
+    }
+
+    .contacts-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+        padding: 2rem;
+    }
+
+    .contact-card {
+        background-color: #2e3b4e;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        transition: transform 0.3s ease;
+        position: relative;
+    }
+
+        .contact-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .contact-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #9cc4ff;
+        margin-bottom: 0.5rem;
+    }
+
+    .contact-info {
+        margin-bottom: 1rem;
+    }
+
+        .contact-info span {
+            display: block;
+            color: #ffffff;
+            margin-bottom: 0.25rem;
+        }
+
+    .card-actions {
+        display: flex;
+        gap: 10px;
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+    }
+
+        .card-actions a {
+            background-color: #007bff;
+            color: white;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+            .card-actions a:hover {
+                background-color: #0056b3;
+                transform: scale(1.1);
+            }
+
+    .floating-create {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background-color: #00bfff;
+        color: white;
+        border-radius: 50%;
+        padding: 18px;
+        font-size: 22px;
+        text-decoration: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+    }
+
+        .floating-create:hover {
+            background-color: #0095cc;
+            transform: scale(1.1);
+        }
+</style>
+
+<h1>Contacts</h1>
+
+<div class="contacts-container">
+    @foreach (var item in Model)
+    {
+        <div class="contact-card">
+            <div class="contact-name">@item.Name</div>
+            <div class="contact-info">
+                <span><strong>Email:</strong> @item.Email</span>
+                <span><strong>Subject:</strong> @item.Subject</span>
+                <span><strong>Message:</strong> @item.Message</span>
+            </div>
+            <div class="card-actions">
+                <a asp-action="Edit" asp-route-id="@item.Id" title="Edit"><i class="bi bi-pencil"></i></a>
+                <a asp-action="Details" asp-route-id="@item.Id" title="Details"><i class="bi bi-eye"></i></a>
+                <a asp-action="Delete" asp-route-id="@item.Id" title="Delete"><i class="bi bi-trash"></i></a>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Floating Create Button -->
+<a asp-action="Create" class="floating-create" title="Create New Contact">
+    <i class="bi bi-plus"></i>
+</a>
+
+<!-- Bootstrap icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
