@@ -1,66 +1,92 @@
 ﻿@model Demo.Models.Build
-
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Build";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create</h1>
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-3">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h2 class="mb-0">Create Your PC Build</h2>
+            <a asp-action="Index" class="btn btn-light btn-sm">← Back to List</a>
+        </div>
+        <div class="card-body bg-light">
+            <form asp-action="Create" class="needs-validation" novalidate>
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-<h4>Build</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="BuildName" class="control-label"></label>
-                <input asp-for="BuildName" class="form-control" />
-                <span asp-validation-for="BuildName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CPUId" class="control-label"></label>
-                <select asp-for="CPUId" class ="form-control" asp-items="ViewBag.CPUId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="GPUId" class="control-label"></label>
-                <select asp-for="GPUId" class ="form-control" asp-items="ViewBag.GPUId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="MotherboardId" class="control-label"></label>
-                <select asp-for="MotherboardId" class ="form-control" asp-items="ViewBag.MotherboardId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="RAMId" class="control-label"></label>
-                <select asp-for="RAMId" class ="form-control" asp-items="ViewBag.RAMId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="StorageId" class="control-label"></label>
-                <select asp-for="StorageId" class ="form-control" asp-items="ViewBag.StorageId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="PowerSupplyId" class="control-label"></label>
-                <select asp-for="PowerSupplyId" class ="form-control" asp-items="ViewBag.PowerSupplyId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="CaseId" class="control-label"></label>
-                <select asp-for="CaseId" class ="form-control" asp-items="ViewBag.CaseId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="TotalPrice" class="control-label"></label>
-                <input asp-for="TotalPrice" class="form-control" />
-                <span asp-validation-for="TotalPrice" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="BuildName" class="form-label fw-bold"></label>
+                        <input asp-for="BuildName" class="form-control shadow-sm" placeholder="Enter build name..." />
+                        <span asp-validation-for="BuildName" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="CPUId" class="form-label fw-bold"></label>
+                        <select asp-for="CPUId" class="form-select shadow-sm" asp-items="ViewBag.CPUId">
+                            <option value="">-- Select CPU --</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="GPUId" class="form-label fw-bold"></label>
+                        <select asp-for="GPUId" class="form-select shadow-sm" asp-items="ViewBag.GPUId">
+                            <option value="">-- Select GPU --</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="MotherboardId" class="form-label fw-bold"></label>
+                        <select asp-for="MotherboardId" class="form-select shadow-sm" asp-items="ViewBag.MotherboardId">
+                            <option value="">-- Select Motherboard --</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="RAMId" class="form-label fw-bold"></label>
+                        <select asp-for="RAMId" class="form-select shadow-sm" asp-items="ViewBag.RAMId">
+                            <option value="">-- Select RAM --</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="StorageId" class="form-label fw-bold"></label>
+                        <select asp-for="StorageId" class="form-select shadow-sm" asp-items="ViewBag.StorageId">
+                            <option value="">-- Select Storage --</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="PowerSupplyId" class="form-label fw-bold"></label>
+                        <select asp-for="PowerSupplyId" class="form-select shadow-sm" asp-items="ViewBag.PowerSupplyId">
+                            <option value="">-- Select Power Supply --</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="CaseId" class="form-label fw-bold"></label>
+                        <select asp-for="CaseId" class="form-select shadow-sm" asp-items="ViewBag.CaseId">
+                            <option value="">-- Select Case --</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="TotalPrice" class="form-label fw-bold"></label>
+                        <input asp-for="TotalPrice" class="form-control shadow-sm" placeholder="Enter total price..." />
+                        <span asp-validation-for="TotalPrice" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mt-4 text-end">
+                    <input type="submit" value="Create Build" class="btn btn-success px-4 py-2 shadow-sm" />
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
