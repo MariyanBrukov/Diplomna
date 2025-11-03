@@ -10,7 +10,8 @@ namespace Demo.Models
         {
         }
 
-        // Existing DbSets
+        // ✅ DbSets
+        public DbSet<User> Users { get; set; }
         public DbSet<CPU> CPUs { get; set; }
         public DbSet<GPU> GPUs { get; set; }
         public DbSet<Motherboard> Motherboards { get; set; }
@@ -21,15 +22,11 @@ namespace Demo.Models
         public DbSet<Build> Builds { get; set; }
         public DbSet<Contact> Contacts { get; set; }
 
-        // ✅ Add the User DbSet
-        public DbSet<User> Users { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-
-            // ✅ SEED DATA — these will automatically populate the database
+            // ✅ SEED DATA — automatically populates your database
 
             // CPUs
             modelBuilder.Entity<CPU>().HasData(
