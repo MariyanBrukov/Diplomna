@@ -1,121 +1,31 @@
 ﻿@model Demo.Models.Build
-
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Build Details";
 }
 
-<style>
-    body {
-        background-color: #1e2a38; /* dark navy blue background */
-        color: #e0e0e0; /* light grey text */
-        font-family: 'Segoe UI', sans-serif;
-    }
+<div class="card card-glow p-4">
+    <h2 class="mb-4 text-center text-info"><i class="fa-solid fa-eye"></i> @Model.BuildName</h2>
+    <dl class="row">
+        <dt class="col-sm-3">CPU</dt>
+        <dd class="col-sm-9">@Model.CPU?.Name</dd>
+        <dt class="col-sm-3">GPU</dt>
+        <dd class="col-sm-9">@Model.GPU?.Name</dd>
+        <dt class="col-sm-3">Motherboard</dt>
+        <dd class="col-sm-9">@Model.Motherboard?.Name</dd>
+        <dt class="col-sm-3">RAM</dt>
+        <dd class="col-sm-9">@Model.RAM?.Name</dd>
+        <dt class="col-sm-3">Storage</dt>
+        <dd class="col-sm-9">@Model.Storage?.Name</dd>
+        <dt class="col-sm-3">Power Supply</dt>
+        <dd class="col-sm-9">@Model.PowerSupply?.Name</dd>
+        <dt class="col-sm-3">Case</dt>
+        <dd class="col-sm-9">@Model.Case?.Name</dd>
+        <dt class="col-sm-3 text-success">Total Price</dt>
+        <dd class="col-sm-9 text-success fw-bold">@Model.TotalPrice.ToString("C")</dd>
+    </dl>
 
-    .details-card {
-        background-color: #2e3b4e; /* dark grey-blue card */
-        border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-        padding: 2rem;
-        margin-top: 2rem;
-        transition: transform 0.3s ease;
-    }
-
-        .details-card:hover {
-            transform: translateY(-3px);
-        }
-
-    dt {
-        color: #9cc4ff; /* soft blue labels */
-        font-weight: 600;
-    }
-
-    dd {
-        color: #ffffff;
-    }
-
-    .floating-buttons {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-        .floating-buttons a {
-            background-color: #007bff;
-            color: white;
-            border-radius: 50%;
-            padding: 14px 16px;
-            text-decoration: none;
-            font-size: 18px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
-        }
-
-            .floating-buttons a:hover {
-                background-color: #0056b3;
-                transform: scale(1.1);
-            }
-
-    .page-title {
-        text-align: center;
-        color: #9cc4ff;
-        margin-top: 1rem;
-        letter-spacing: 1px;
-    }
-
-    hr {
-        border-color: #44576b;
-    }
-</style>
-
-<h1 class="page-title">Build Details</h1>
-
-<div class="container">
-    <div class="details-card">
-        <h4 class="text-light mb-4">Build Information</h4>
-        <hr />
-        <dl class="row">
-            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.BuildName)</dt>
-            <dd class="col-sm-9">@Html.DisplayFor(model => model.BuildName)</dd>
-
-            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.CPU)</dt>
-            <dd class="col-sm-9">@Html.DisplayFor(model => model.CPU.Name)</dd>
-
-            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.GPU)</dt>
-            <dd class="col-sm-9">@Html.DisplayFor(model => model.GPU.Name)</dd>
-
-            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Motherboard)</dt>
-            <dd class="col-sm-9">@Html.DisplayFor(model => model.Motherboard.Name)</dd>
-
-            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.RAM)</dt>
-            <dd class="col-sm-9">@Html.DisplayFor(model => model.RAM.Name)</dd>
-
-            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Storage)</dt>
-            <dd class="col-sm-9">@Html.DisplayFor(model => model.Storage.Name)</dd>
-
-            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.PowerSupply)</dt>
-            <dd class="col-sm-9">@Html.DisplayFor(model => model.PowerSupply.Name)</dd>
-
-            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Case)</dt>
-            <dd class="col-sm-9">@Html.DisplayFor(model => model.Case.Name)</dd>
-
-            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.TotalPrice)</dt>
-            <dd class="col-sm-9 fw-bold text-success">@Html.DisplayFor(model => model.TotalPrice)</dd>
-        </dl>
+    <div class="text-center">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-2"><i class="fa-solid fa-pen"></i> Edit</a>
+        <a asp-action="Index" class="btn btn-outline-light">Back to List</a>
     </div>
 </div>
-
-<!-- Floating Buttons -->
-<div class="floating-buttons">
-    <a asp-action="Edit" asp-route-id="@Model?.Id" title="Edit Build">
-        <i class="bi bi-pencil"></i>
-    </a>
-    <a asp-action="Index" title="Back to List">
-        <i class="bi bi-arrow-left"></i>
-    </a>
-</div>
-
-<!-- If using Bootstrap icons -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">

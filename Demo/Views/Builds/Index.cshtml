@@ -1,48 +1,36 @@
 ﻿@model IEnumerable<Demo.Models.Build>
-
 @{
-    ViewData["Title"] = "Builds";
+    ViewData["Title"] = "My Builds";
 }
 
-<h2 class="page-title">All Builds</h2>
+<h1 class="mb-4 text-center"><i class="fa-solid fa-screwdriver-wrench"></i> My Builds</h1>
 
-<div class="builds-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
-    @foreach (var build in Model)
+<p class="text-center">
+    <a asp-action="Create" class="btn btn-fancy"><i class="fa-solid fa-plus-circle"></i> Create New Build</a>
+</p>
+
+<div class="row">
+    @foreach (var item in Model)
     {
-        <div class="build-card" style="background-color: #fff; border-radius: 10px; padding: 1.5rem; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.2s;">
-            <h3 style="margin-top: 0;">@build.BuildName</h3>
-            <ul style="list-style: none; padding: 0; line-height: 1.6;">
-                <li><strong>CPU:</strong> @build.CPU?.Name</li>
-                <li><strong>GPU:</strong> @build.GPU?.Name</li>
-                <li><strong>Motherboard:</strong> @build.Motherboard?.Name</li>
-                <li><strong>RAM:</strong> @build.RAM?.Name</li>
-                <li><strong>Storage:</strong> @build.Storage?.Name</li>
-                <li><strong>Power Supply:</strong> @build.PowerSupply?.Name</li>
-                <li><strong>Case:</strong> @build.Case?.Name</li>
-            </ul>
-            <p style="font-weight: bold; font-size: 1.1rem; margin-top: 1rem;">Total Price: @build.TotalPrice.ToString("C")</p>
-            <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
-                <a asp-action="Edit" asp-route-id="@build.Id" style="flex:1; text-align:center; background-color:#2f3b52; color:white; padding:0.5rem; border-radius:5px; text-decoration:none;">Edit</a>
-                <a asp-action="Details" asp-route-id="@build.Id" style="flex:1; text-align:center; background-color:#3d4d6a; color:white; padding:0.5rem; border-radius:5px; text-decoration:none;">Details</a>
-                <form asp-action="Delete" asp-route-id="@build.Id" method="post" style="flex:1;">
-                    <button type="submit" style="width:100%; background-color:#e63946; color:white; padding:0.5rem; border:none; border-radius:5px; cursor:pointer;">Delete</button>
-                </form>
+        <div class="col-md-4 mb-4">
+            <div class="card card-glow h-100 p-3">
+                <div class="card-body">
+                    <h5 class="card-title text-info">@item.BuildName</h5>
+                    <p class="mb-1"><strong>CPU:</strong> @item.CPU?.Name</p>
+                    <p class="mb-1"><strong>GPU:</strong> @item.GPU?.Name</p>
+                    <p class="mb-1"><strong>Motherboard:</strong> @item.Motherboard?.Name</p>
+                    <p class="mb-1"><strong>RAM:</strong> @item.RAM?.Name</p>
+                    <p class="mb-1"><strong>Storage:</strong> @item.Storage?.Name</p>
+                    <p class="mb-1"><strong>Power Supply:</strong> @item.PowerSupply?.Name</p>
+                    <p class="mb-3"><strong>Case:</strong> @item.Case?.Name</p>
+                    <h5 class="text-success"><strong>Total:</strong> @item.TotalPrice.ToString("C")</h5>
+                </div>
+                <div class="card-footer text-center">
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info me-2"><i class="fa-solid fa-eye"></i></a>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning me-2"><i class="fa-solid fa-pen"></i></a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></a>
+                </div>
             </div>
         </div>
     }
 </div>
-
-<a asp-action="Create" style="display:inline-block; margin-top:2rem; background-color:#1d3557; color:white; padding:0.7rem 1.5rem; border-radius:8px; text-decoration:none;">Create New Build</a>
-
-<style>
-    .build-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-    }
-
-    .page-title {
-        font-size: 2rem;
-        margin-bottom: 1.5rem;
-        color: #1d3557;
-    }
-</style>
