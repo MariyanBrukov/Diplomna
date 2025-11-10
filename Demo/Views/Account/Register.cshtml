@@ -1,49 +1,79 @@
 ﻿@model Demo.Models.ViewModels.RegisterViewModel
-
 @{
     ViewData["Title"] = "Register";
 }
 
-<section style="max-width: 450px; margin: 4rem auto; padding: 2rem; background-color:#f3f4f6; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-    <h2 style="text-align:center; color:#2f3b52; margin-bottom:1.5rem;">Create Your Account</h2>
+<div class="d-flex justify-content-center align-items-center" style="min-height:80vh;">
+    <div class="card card-glow p-5 text-center" style="max-width:460px; width:100%;">
+        <h2 class="mb-4 text-info fw-bold">
+            <i class="fa-solid fa-user-plus"></i> Create Your Account
+        </h2>
 
-    <form asp-action="Register" method="post">
-        <div style="margin-bottom:1rem;">
-            <label asp-for="Username"></label>
-            <input asp-for="Username" class="form-control" style="width:100%; padding:0.6rem; border-radius:6px; border:1px solid #ccc;" />
-            <span asp-validation-for="Username" class="text-danger"></span>
+        <form asp-action="Register" method="post" class="text-start">
+            <div class="mb-3">
+                <label asp-for="Username" class="form-label fw-semibold text-light"></label>
+                <div class="input-group">
+                    <span class="input-group-text bg-dark text-info border-secondary">
+                        <i class="fa-solid fa-user"></i>
+                    </span>
+                    <input asp-for="Username" class="form-control bg-dark text-light border-secondary" placeholder="Your username" />
+                </div>
+                <span asp-validation-for="Username" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label fw-semibold text-light"></label>
+                <div class="input-group">
+                    <span class="input-group-text bg-dark text-info border-secondary">
+                        <i class="fa-solid fa-envelope"></i>
+                    </span>
+                    <input asp-for="Email" class="form-control bg-dark text-light border-secondary" placeholder="you@example.com" />
+                </div>
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label fw-semibold text-light"></label>
+                <div class="input-group">
+                    <span class="input-group-text bg-dark text-info border-secondary">
+                        <i class="fa-solid fa-lock"></i>
+                    </span>
+                    <input asp-for="Password" type="password" class="form-control bg-dark text-light border-secondary" placeholder="••••••••" />
+                </div>
+                <span asp-validation-for="Password" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ConfirmPassword" class="form-label fw-semibold text-light"></label>
+                <div class="input-group">
+                    <span class="input-group-text bg-dark text-info border-secondary">
+                        <i class="fa-solid fa-lock"></i>
+                    </span>
+                    <input asp-for="ConfirmPassword" type="password" class="form-control bg-dark text-light border-secondary" placeholder="Confirm password" />
+                </div>
+                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+            </div>
+
+            <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-fancy py-2 fw-semibold">
+                    <i class="fa-solid fa-user-check"></i> Register
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-4">
+            <p class="text-muted mb-0">
+                Already have an account?
+                <a asp-action="Login" class="text-info fw-semibold text-decoration-none">Login here</a>
+            </p>
         </div>
-
-        <div style="margin-bottom:1rem;">
-            <label asp-for="Email"></label>
-            <input asp-for="Email" class="form-control" style="width:100%; padding:0.6rem; border-radius:6px; border:1px solid #ccc;" />
-            <span asp-validation-for="Email" class="text-danger"></span>
-        </div>
-
-        <div style="margin-bottom:1rem;">
-            <label asp-for="Password"></label>
-            <input asp-for="Password" type="password" class="form-control" style="width:100%; padding:0.6rem; border-radius:6px; border:1px solid #ccc;" />
-            <span asp-validation-for="Password" class="text-danger"></span>
-        </div>
-
-        <div style="margin-bottom:1rem;">
-            <label asp-for="ConfirmPassword"></label>
-            <input asp-for="ConfirmPassword" type="password" class="form-control" style="width:100%; padding:0.6rem; border-radius:6px; border:1px solid #ccc;" />
-            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-        </div>
-
-        <button type="submit" style="width:100%; padding:0.8rem; background-color:#2f3b52; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer; transition:0.2s;">
-            Register
-        </button>
-    </form>
-
-    <p style="margin-top:1rem; text-align:center;">
-        Already have an account? <a asp-action="Login" style="color:#2f3b52;">Login here</a>
-    </p>
-</section>
+    </div>
+</div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        // subtle fade animation
+        document.querySelector('.card-glow').classList.add('fade-in');
+    </script>
 }

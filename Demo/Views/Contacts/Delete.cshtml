@@ -1,119 +1,48 @@
 ﻿@model Demo.Models.Contact
-
 @{
     ViewData["Title"] = "Delete Contact";
 }
 
-<style>
-    body {
-        background-color: #1e2a38;
-        color: #e0e0e0;
-        font-family: 'Segoe UI', sans-serif;
-    }
+<div class="d-flex justify-content-center align-items-center fade-in" style="min-height:80vh;">
+    <div class="card card-glow p-5 text-center" style="max-width:500px; width:100%;">
+        <h2 class="text-danger fw-bold mb-3">
+            <i class="fa-solid fa-triangle-exclamation"></i> Confirm Deletion
+        </h2>
+        <p class="text-light mb-4">Are you sure you want to permanently delete this contact?</p>
 
-    h1 {
-        text-align: center;
-        color: #9cc4ff;
-        margin-top: 1rem;
-        letter-spacing: 1px;
-    }
+        <div class="text-start bg-dark border border-secondary rounded-3 p-3 mb-4">
+            <p class="mb-2">
+                <strong class="text-info">Name:</strong>
+                <span class="text-light">@Model.Name</span>
+            </p>
+            <p class="mb-2">
+                <strong class="text-info">Email:</strong>
+                <span class="text-light">@Model.Email</span>
+            </p>
+            <p class="mb-2">
+                <strong class="text-info">Subject:</strong>
+                <span class="text-light">@Model.Subject</span>
+            </p>
+            <p class="mb-0">
+                <strong class="text-info">Message:</strong>
+                <span class="text-light">@Model.Message</span>
+            </p>
+        </div>
 
-    .delete-card {
-        background-color: #2e3b4e;
-        border-radius: 16px;
-        padding: 2rem;
-        max-width: 500px;
-        margin: 2rem auto;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-        text-align: center;
-        transition: transform 0.3s ease;
-    }
-
-        .delete-card:hover {
-            transform: translateY(-5px);
-        }
-
-    .detail-item {
-        margin-bottom: 1rem;
-    }
-
-    .detail-label {
-        color: #9cc4ff;
-        font-weight: 600;
-        display: block;
-        margin-bottom: 0.25rem;
-    }
-
-    .detail-value {
-        color: #ffffff;
-    }
-
-    .btn-delete {
-        background-color: #ff4d4d;
-        color: white;
-        border: none;
-        border-radius: 10px;
-        padding: 12px 25px;
-        font-size: 16px;
-        cursor: pointer;
-        box-shadow: 0 0 20px #ff4d4d, 0 0 40px #ff6666, 0 0 60px #ff8080;
-        transition: all 0.3s ease;
-    }
-
-        .btn-delete:hover {
-            box-shadow: 0 0 30px #ff4d4d, 0 0 60px #ff6666, 0 0 90px #ff8080;
-            transform: scale(1.05);
-        }
-
-    .floating-back {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        background-color: #00bfff;
-        color: white;
-        border-radius: 50%;
-        padding: 18px;
-        font-size: 22px;
-        text-decoration: none;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        transition: all 0.3s ease;
-    }
-
-        .floating-back:hover {
-            background-color: #0095cc;
-            transform: scale(1.1);
-        }
-</style>
-
-<h1>Delete Contact</h1>
-
-<div class="delete-card">
-    <p>Are you sure you want to delete this contact?</p>
-    <div class="detail-item">
-        <span class="detail-label">Name</span>
-        <span class="detail-value">@Model.Name</span>
+        <form asp-action="Delete" method="post" class="d-flex justify-content-center gap-3">
+            <input type="hidden" asp-for="Id" />
+            <a asp-action="Index" class="btn btn-outline-light px-4 rounded-pill">
+                <i class="fa-solid fa-arrow-left"></i> Cancel
+            </a>
+            <button type="submit" class="btn btn-danger px-4 rounded-pill" style="box-shadow: 0 0 25px rgba(255, 77, 77, 0.4);">
+                <i class="fa-solid fa-trash"></i> Delete
+            </button>
+        </form>
     </div>
-    <div class="detail-item">
-        <span class="detail-label">Email</span>
-        <span class="detail-value">@Model.Email</span>
-    </div>
-    <div class="detail-item">
-        <span class="detail-label">Subject</span>
-        <span class="detail-value">@Model.Subject</span>
-    </div>
-    <div class="detail-item">
-        <span class="detail-label">Message</span>
-        <span class="detail-value">@Model.Message</span>
-    </div>
-
-    <form asp-action="Delete" method="post">
-        <input type="hidden" asp-for="Id" />
-        <button type="submit" class="btn-delete">Delete</button>
-    </form>
 </div>
 
-<a asp-action="Index" class="floating-back" title="Back to Contacts">
-    <i class="bi bi-arrow-left"></i>
-</a>
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+@section Scripts {
+    <script>
+        document.querySelector('.card-glow').classList.add('fade-in');
+    </script>
+}
