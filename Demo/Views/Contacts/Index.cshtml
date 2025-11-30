@@ -10,10 +10,10 @@
 
     @if (!Model.Any())
     {
-        <div class="text-center text-muted mt-5">
+        <div class="text-center text-light mt-5">
             <i class="fa-solid fa-inbox fa-3x mb-3 text-info"></i>
             <h4>No contacts found</h4>
-            <p>Click the + button below to add a new contact.</p>
+            <p class="text-white-50">Click the + button below to add a new contact.</p>
         </div>
     }
     else
@@ -23,27 +23,48 @@
             {
                 <div class="col-md-6 col-lg-4">
                     <div class="card card-glow h-100 p-4 position-relative">
+
                         <h5 class="text-info fw-semibold mb-2">
                             <i class="fa-solid fa-user me-1"></i> @item.Name
                         </h5>
 
                         <div class="text-light small mb-3">
-                            <p class="mb-1"><strong>Email:</strong> <span class="text-muted">@item.Email</span></p>
-                            <p class="mb-1"><strong>Subject:</strong> <span class="text-muted">@item.Subject</span></p>
-                            <p class="mb-1"><strong>Message:</strong> <span class="text-muted">@item.Message</span></p>
+                            <p class="mb-1">
+                                <strong>Email:</strong>
+                                <span class="text-white-50">@item.Email</span>
+                            </p>
+
+                            <p class="mb-1">
+                                <strong>Subject:</strong>
+                                <span class="text-white-50">@item.Subject</span>
+                            </p>
+
+                            <p class="mb-1">
+                                <strong>Message:</strong>
+                                <span class="text-white-50">@item.Message</span>
+                            </p>
                         </div>
 
                         <div class="d-flex justify-content-end gap-2 mt-auto">
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info" title="Details">
+                            <a asp-action="Details" asp-route-id="@item.Id"
+                               class="btn btn-sm btn-outline-info"
+                               title="Details">
                                 <i class="fa-solid fa-eye"></i>
                             </a>
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning" title="Edit">
+
+                            <a asp-action="Edit" asp-route-id="@item.Id"
+                               class="btn btn-sm btn-outline-warning"
+                               title="Edit">
                                 <i class="fa-solid fa-pen"></i>
                             </a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger" title="Delete">
+
+                            <a asp-action="Delete" asp-route-id="@item.Id"
+                               class="btn btn-sm btn-outline-danger"
+                               title="Delete">
                                 <i class="fa-solid fa-trash"></i>
                             </a>
                         </div>
+
                     </div>
                 </div>
             }
@@ -52,7 +73,8 @@
 </div>
 
 <!-- Floating Create Button -->
-<a asp-action="Create" class="btn btn-fancy rounded-circle position-fixed d-flex align-items-center justify-content-center"
+<a asp-action="Create"
+   class="btn btn-fancy rounded-circle position-fixed d-flex align-items-center justify-content-center"
    style="width:60px; height:60px; bottom:30px; right:30px; font-size:1.4rem; box-shadow:0 0 20px rgba(97,218,251,0.4);"
    title="Create New Contact">
     <i class="fa-solid fa-plus"></i>
