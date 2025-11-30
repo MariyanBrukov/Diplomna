@@ -2,13 +2,13 @@
     ViewData["Title"] = "Home";
 }
 
-<section class="text-center fade-in" style="margin-top:5rem;">
+<section class="text-center fade-in py-5" style="margin-top:4rem;">
     <div class="container">
         <h1 class="fw-bold mb-3" style="font-size:2.8rem; color:#61dafb;">
             Welcome to <span class="text-light">PC Junkie</span>
         </h1>
 
-        <p class="lead mx-auto" style="max-width:700px; color:#cfd2d8; font-size:1.15rem;">
+        <p class="lead mx-auto text-white-50" style="max-width:700px; font-size:1.15rem;">
             Your ultimate hub for <span class="text-info fw-semibold">custom PC builds</span>,
             <span class="text-info fw-semibold">hardware insights</span>, and a passionate
             <span class="text-info fw-semibold">tech community</span>.
@@ -27,33 +27,51 @@
                 <i class="fa-solid fa-envelope me-2"></i> Contact Us
             </a>
         </div>
+
+        <div class="mt-4 text-white-50 small">
+            <i class="fa-solid fa-bolt me-1 text-info"></i>
+            Start by exploring featured builds or send us a message with your dream setup.
+        </div>
     </div>
 </section>
 
-<section class="text-center mt-5">
+<section class="text-center mt-5 fade-in">
     <div class="container">
         <hr class="my-4" style="border-color:rgba(255,255,255,0.1);" />
-        <h3 class="text-info mb-3"><i class="fa-solid fa-star"></i> Why PC Junkie?</h3>
+        <h3 class="text-info mb-3">
+            <i class="fa-solid fa-star me-2"></i> Why PC Junkie?
+        </h3>
+        <p class="text-white-50 mb-4" style="max-width:650px; margin:0 auto;">
+            Whether you’re a first-time builder or a seasoned enthusiast, we give you the tools
+            to compare parts, track prices, and share your ultimate rigs.
+        </p>
+
         <div class="row justify-content-center text-light">
             <div class="col-md-4 mb-3">
                 <div class="card card-glow p-4 h-100">
                     <i class="fa-solid fa-microchip fa-2x text-info mb-3"></i>
                     <h5 class="fw-bold">Custom Builds</h5>
-                    <p class="text-muted">Hand-pick components and visualize the cost instantly.</p>
+                    <p class="text-white-50 mb-0">
+                        Hand-pick components, visualize the cost instantly, and fine-tune every detail.
+                    </p>
                 </div>
             </div>
             <div class="col-md-4 mb-3">
                 <div class="card card-glow p-4 h-100">
                     <i class="fa-solid fa-users fa-2x text-info mb-3"></i>
                     <h5 class="fw-bold">Community Driven</h5>
-                    <p class="text-muted">Join our network of builders and share your setups.</p>
+                    <p class="text-white-50 mb-0">
+                        Join our network of builders, showcase your setups, and get feedback.
+                    </p>
                 </div>
             </div>
             <div class="col-md-4 mb-3">
                 <div class="card card-glow p-4 h-100">
                     <i class="fa-solid fa-headset fa-2x text-info mb-3"></i>
                     <h5 class="fw-bold">Expert Support</h5>
-                    <p class="text-muted">Need help picking parts? Our experts are here for you.</p>
+                    <p class="text-white-50 mb-0">
+                        Need help picking parts? Our experts are here to guide you step by step.
+                    </p>
                 </div>
             </div>
         </div>
@@ -62,6 +80,9 @@
 
 @section Scripts {
     <script>
-        document.querySelector('section').classList.add('fade-in');
+        // Apply fade-in to all sections on load (if your CSS uses this class)
+        document.querySelectorAll('section').forEach(sec => {
+            sec.classList.add('fade-in');
+        });
     </script>
 }

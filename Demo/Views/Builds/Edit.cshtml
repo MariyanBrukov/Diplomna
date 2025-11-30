@@ -15,40 +15,67 @@
             <span asp-validation-for="BuildName" class="text-danger"></span>
         </div>
 
+        <!-- Global filters / sorting for all parts -->
+        <div class="mb-4">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-6">
+                    <label class="form-label text-light">Sort parts by</label>
+                    <select id="sortMode" class="form-select">
+                        <option value="default">Default order</option>
+                        <option value="priceAsc">Price: Low to High</option>
+                        <option value="priceDesc">Price: High to Low</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label text-light">Price filter</label>
+                    <select id="priceFilter" class="form-select">
+                        <option value="all">All price levels</option>
+                        <option value="budget">Budget</option>
+                        <option value="mid">Mid-range</option>
+                        <option value="high">High-end</option>
+                    </select>
+                    <div class="form-text text-white-50">
+                        Budget ≈ cheapest 40%, High-end ≈ priciest 40% for each part.
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label asp-for="CPUId"></label>
-                <select asp-for="CPUId" asp-items="ViewBag.CPUId" class="form-select part-dropdown" data-type="CPU"></select>
+                <label asp-for="CPUId" class="form-label"></label>
+                <select asp-for="CPUId" asp-items="ViewBag.CPUId"
+                        class="form-select part-dropdown" data-type="CPU"></select>
             </div>
-
             <div class="col-md-6 mb-3">
-                <label asp-for="GPUId"></label>
-                <select asp-for="GPUId" asp-items="ViewBag.GPUId" class="form-select part-dropdown" data-type="GPU"></select>
+                <label asp-for="GPUId" class="form-label"></label>
+                <select asp-for="GPUId" asp-items="ViewBag.GPUId"
+                        class="form-select part-dropdown" data-type="GPU"></select>
             </div>
-
             <div class="col-md-6 mb-3">
-                <label asp-for="MotherboardId"></label>
-                <select asp-for="MotherboardId" asp-items="ViewBag.MotherboardId" class="form-select part-dropdown" data-type="Motherboard"></select>
+                <label asp-for="MotherboardId" class="form-label"></label>
+                <select asp-for="MotherboardId" asp-items="ViewBag.MotherboardId"
+                        class="form-select part-dropdown" data-type="Motherboard"></select>
             </div>
-
             <div class="col-md-6 mb-3">
-                <label asp-for="RAMId"></label>
-                <select asp-for="RAMId" asp-items="ViewBag.RAMId" class="form-select part-dropdown" data-type="RAM"></select>
+                <label asp-for="RAMId" class="form-label"></label>
+                <select asp-for="RAMId" asp-items="ViewBag.RAMId"
+                        class="form-select part-dropdown" data-type="RAM"></select>
             </div>
-
             <div class="col-md-6 mb-3">
-                <label asp-for="StorageId"></label>
-                <select asp-for="StorageId" asp-items="ViewBag.StorageId" class="form-select part-dropdown" data-type="Storage"></select>
+                <label asp-for="StorageId" class="form-label"></label>
+                <select asp-for="StorageId" asp-items="ViewBag.StorageId"
+                        class="form-select part-dropdown" data-type="Storage"></select>
             </div>
-
             <div class="col-md-6 mb-3">
-                <label asp-for="PowerSupplyId"></label>
-                <select asp-for="PowerSupplyId" asp-items="ViewBag.PowerSupplyId" class="form-select part-dropdown" data-type="PowerSupply"></select>
+                <label asp-for="PowerSupplyId" class="form-label"></label>
+                <select asp-for="PowerSupplyId" asp-items="ViewBag.PowerSupplyId"
+                        class="form-select part-dropdown" data-type="PowerSupply"></select>
             </div>
-
             <div class="col-md-6 mb-3">
-                <label asp-for="CaseId"></label>
-                <select asp-for="CaseId" asp-items="ViewBag.CaseId" class="form-select part-dropdown" data-type="Case"></select>
+                <label asp-for="CaseId" class="form-label"></label>
+                <select asp-for="CaseId" asp-items="ViewBag.CaseId"
+                        class="form-select part-dropdown" data-type="Case"></select>
             </div>
         </div>
 
@@ -60,48 +87,156 @@
         <button type="submit" class="btn btn-fancy">
             <i class="fa-solid fa-save"></i> Save Changes
         </button>
-
-        <a asp-action="Index" class="btn btn-outline-light ms-2">
-            Back to List
-        </a>
+        <a asp-action="Index" class="btn btn-outline-light ms-2">Back to List</a>
     </form>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-
     <script>
-        // Example prices (same as Create view)
+        // Same example prices as Create page
         const partPrices = {
-            CPU: { 1: 160, 2: 420, 3: 140, 4: 400, 5: 600 },
-            GPU: { 1: 300, 2: 550, 3: 270, 4: 750, 5: 1600 },
-            Motherboard: { 1: 150, 2: 180, 3: 230, 4: 220, 5: 200 },
-            RAM: { 1: 50, 2: 160, 3: 55, 4: 140, 5: 60 },
-            Storage: { 1: 90, 2: 70, 3: 40, 4: 60, 5: 160 },
-            PowerSupply: { 1: 100, 2: 50, 3: 120, 4: 70, 5: 250 },
-            Case: { 1: 80, 2: 100, 3: 90, 4: 140, 5: 120 }
+            CPU:        { 1:160, 2:420, 3:140, 4:400, 5:600 },
+            GPU:        { 1:300, 2:550, 3:270, 4:750, 5:1600 },
+            Motherboard:{ 1:150, 2:180, 3:230, 4:220, 5:200 },
+            RAM:        { 1: 50, 2:160, 3: 55, 4:140, 5: 60 },
+            Storage:    { 1: 90, 2: 70, 3: 40, 4: 60, 5:160 },
+            PowerSupply:{ 1:100, 2: 50, 3:120, 4: 70, 5:250 },
+            Case:       { 1: 80, 2:100, 3: 90, 4:140, 5:120 }
         };
 
-        document.querySelectorAll('.part-dropdown').forEach(drop => {
-            drop.addEventListener('change', calcTotal);
+        const originalOptions = {};
+
+        document.addEventListener('DOMContentLoaded', function () {
+            initOriginalOptions();
+            applySortAndFilter(); // build options with prices
+            attachEvents();
+            calcTotal(); // set initial total based on existing selections
         });
+
+        function initOriginalOptions() {
+            document.querySelectorAll('.part-dropdown').forEach(select => {
+                const type = select.dataset.type;
+                originalOptions[type] = [];
+
+                Array.from(select.options).forEach(opt => {
+                    originalOptions[type].push({
+                        value: opt.value,
+                        text: opt.text,
+                        isPlaceholder: opt.value === "" || opt.value === "0"
+                    });
+                });
+            });
+        }
+
+        function attachEvents() {
+            document.querySelectorAll('.part-dropdown').forEach(drop => {
+                drop.addEventListener('change', calcTotal);
+            });
+
+            const sortMode = document.getElementById('sortMode');
+            const priceFilter = document.getElementById('priceFilter');
+
+            sortMode.addEventListener('change', () => {
+                applySortAndFilter();
+                calcTotal();
+            });
+
+            priceFilter.addEventListener('change', () => {
+                applySortAndFilter();
+                calcTotal();
+            });
+        }
+
+        function passesFilter(price, filter, type) {
+            if (!price || filter === 'all') return true;
+
+            const pricesForType = Object.values(partPrices[type] || {});
+            if (!pricesForType.length) return true;
+
+            const max = Math.max(...pricesForType);
+            const min = Math.min(...pricesForType);
+            const range = max - min;
+            const budgetCutoff = min + range * 0.4;
+            const highCutoff   = min + range * 0.6;
+
+            if (filter === 'budget') return price <= budgetCutoff;
+            if (filter === 'mid')    return price > budgetCutoff && price < highCutoff;
+            if (filter === 'high')   return price >= highCutoff;
+
+            return true;
+        }
+
+        function applySortAndFilter() {
+            const sortMode = document.getElementById('sortMode').value;
+            const priceFilter = document.getElementById('priceFilter').value;
+
+            document.querySelectorAll('.part-dropdown').forEach(select => {
+                const type = select.dataset.type;
+                const stored = (originalOptions[type] || []).map(o => ({ ...o }));
+
+                const placeholder = stored.find(o => o.isPlaceholder);
+                let realOptions = stored.filter(o => !o.isPlaceholder);
+
+                // attach prices
+                realOptions.forEach(o => {
+                    o.price = (partPrices[type] && partPrices[type][o.value])
+                        ? partPrices[type][o.value]
+                        : 0;
+                });
+
+                // filter
+                realOptions = realOptions.filter(o => passesFilter(o.price, priceFilter, type));
+
+                // sort
+                if (sortMode === 'priceAsc') {
+                    realOptions.sort((a, b) => (a.price || 0) - (b.price || 0));
+                } else if (sortMode === 'priceDesc') {
+                    realOptions.sort((a, b) => (b.price || 0) - (a.price || 0));
+                }
+
+                // rebuild select
+                const currentValue = select.value;
+                select.innerHTML = '';
+
+                if (placeholder) {
+                    const opt = document.createElement('option');
+                    opt.value = placeholder.value;
+                    opt.textContent = placeholder.text;
+                    select.appendChild(opt);
+                }
+
+                realOptions.forEach(o => {
+                    const opt = document.createElement('option');
+                    opt.value = o.value;
+                    const price = o.price || 0;
+                    const priceLabel = price ? ` - $${price.toFixed(2)}` : '';
+                    opt.textContent = o.text + priceLabel;
+                    select.appendChild(opt);
+                });
+
+                // restore previous selection if still available
+                if (currentValue && select.querySelector(`option[value="${currentValue}"]`)) {
+                    select.value = currentValue;
+                }
+            });
+        }
 
         function calcTotal() {
             let total = 0;
-
             document.querySelectorAll('.part-dropdown').forEach(d => {
                 const type = d.dataset.type;
                 const val = d.value;
-
-                if (val && partPrices[type][val]) {
+                if (val && partPrices[type] && partPrices[type][val]) {
                     total += partPrices[type][val];
                 }
             });
 
-            document.getElementById('TotalPrice').value = total.toFixed(2);
+            // update readonly input bound to model
+            const totalInput = document.getElementById('TotalPrice');
+            if (totalInput) {
+                totalInput.value = total.toFixed(2);
+            }
         }
-
-        // Calculate initial total on page load (for existing selections)
-        calcTotal();
     </script>
 }
