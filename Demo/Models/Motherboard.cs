@@ -2,19 +2,11 @@
 
 namespace Demo.Models
 {
-    public class Motherboard
+    public class Motherboard : PartBase
     {
-        public int Id { get; set; }
-
-        [Required]
-        public string Name { get; set; }
-
-        public string Socket { get; set; }
+        public string Socket { get; set; } = string.Empty;
 
         [Display(Name = "Form Factor")]
-        public string FormFactor { get; set; }
-
-        [DataType(DataType.Currency)]
-        public decimal Price { get; set; }
+        public string FormFactor { get; set; } = string.Empty;
     }
 }

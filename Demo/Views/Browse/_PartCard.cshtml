@@ -1,0 +1,33 @@
+﻿@model BrowseItemVm
+
+<div class="card h-100 box-shadow">
+    @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+    {
+        <img src="@Model.ImageUrl" class="card-img-top" alt="@Model.Name" style="object-fit:cover; height:180px;" />
+    }
+    else
+    {
+        <div class="d-flex align-items-center justify-content-center bg-light" style="height:180px;">
+            <span class="text-muted">No image</span>
+        </div>
+    }
+
+    <div class="card-body">
+        <h5 class="card-title mb-1">@Model.Name</h5>
+        <div class="text-muted mb-2">@Model.Brand</div>
+
+        <div class="fw-bold mb-2">$@Model.Price</div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.ShortSpec))
+        {
+            <div class="small text-muted mb-3">@Model.ShortSpec</div>
+        }
+
+        <a class="btn btn-outline-primary w-100"
+           asp-action="Details"
+           asp-route-partType="@Model.PartType"
+           asp-route-id="@Model.Id">
+            View Details
+        </a>
+    </div>
+</div>

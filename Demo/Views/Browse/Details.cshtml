@@ -1,0 +1,51 @@
+﻿@model PartDetailsVm
+
+@{
+    ViewData["Title"] = $"{Model.PartType} Details";
+}
+
+<div class="container py-3">
+    <div class="mb-3">
+        <a asp-action="Index" asp-route-partType="@Model.PartType" class="btn btn-outline-secondary">
+            ← Back to @Model.PartType
+        </a>
+    </div>
+
+    <div class="card box-shadow">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-12 col-lg-5">
+                    @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded border" />
+                    }
+                    else
+                    {
+                        <div class="d-flex align-items-center justify-content-center bg-light border rounded" style="height:320px;">
+                            <span class="text-muted">No image</span>
+                        </div>
+                    }
+                </div>
+
+                <div class="col-12 col-lg-7">
+                    <h3 class="mb-1">@Model.Name</h3>
+                    <div class="text-muted mb-2">@Model.Brand • @Model.PartType</div>
+
+                    <div class="fs-4 fw-bold mb-3">$@Model.Price</div>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.Description))
+                    {
+                        <p>@Model.Description</p>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No description yet.</p>
+                    }
+
+                    <h5 class="mt-4">Specifications</h5>
+                    <partial name="_SpecTable" model="Model" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

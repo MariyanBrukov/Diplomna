@@ -1,0 +1,22 @@
+﻿@model PartDetailsVm
+
+@if (Model.Specs == null || Model.Specs.Count == 0)
+{
+    <div class="text-muted">No specs available.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-sm table-bordered">
+            <tbody>
+                @foreach (var kv in Model.Specs)
+                {
+                    <tr>
+                        <th style="width: 40%;">@kv.Key</th>
+                        <td>@kv.Value</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

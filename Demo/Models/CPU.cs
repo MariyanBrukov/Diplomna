@@ -2,21 +2,13 @@
 
 namespace Demo.Models
 {
-    public class CPU
+    public class CPU : PartBase
     {
-        public int Id { get; set; }
-
-        [Required]
-        public string Name { get; set; }
-
-        public string Socket { get; set; }
+        public string Socket { get; set; } = string.Empty;
 
         public int Cores { get; set; }
 
         [Display(Name = "Clock Speed (GHz)")]
         public float ClockSpeedGHz { get; set; }
-
-        [DataType(DataType.Currency)]
-        public decimal Price { get; set; }
     }
 }

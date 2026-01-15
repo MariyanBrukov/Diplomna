@@ -16,12 +16,25 @@
         </p>
 
         <div class="mt-4 d-flex flex-wrap justify-content-center gap-3">
-            <a asp-controller="Builds" asp-action="Index"
+
+            <!-- 🔵 Browse Parts -->
+            <a asp-controller="Browse"
+               asp-action="Index"
+               asp-route-partType="CPU"
+               class="btn btn-fancy px-4 py-2 fw-semibold">
+                <i class="fa-solid fa-microchip me-2"></i> Browse Parts
+            </a>
+
+            <!-- 🟢 View Builds -->
+            <a asp-controller="Builds"
+               asp-action="Index"
                class="btn btn-fancy px-4 py-2 fw-semibold">
                 <i class="fa-solid fa-screwdriver-wrench me-2"></i> View Builds
             </a>
 
-            <a asp-controller="Contacts" asp-action="Index"
+            <!-- 📨 Contact -->
+            <a asp-controller="Contacts"
+               asp-action="Index"
                class="btn btn-outline-info px-4 py-2 fw-semibold"
                style="border-radius:50px; border:2px solid #61dafb; transition:all 0.25s ease;">
                 <i class="fa-solid fa-envelope me-2"></i> Contact Us
@@ -30,7 +43,7 @@
 
         <div class="mt-4 text-white-50 small">
             <i class="fa-solid fa-bolt me-1 text-info"></i>
-            Start by exploring featured builds or send us a message with your dream setup.
+            Start by browsing PC parts, exploring featured builds, or sending us your dream setup.
         </div>
     </div>
 </section>
@@ -38,9 +51,11 @@
 <section class="text-center mt-5 fade-in">
     <div class="container">
         <hr class="my-4" style="border-color:rgba(255,255,255,0.1);" />
+
         <h3 class="text-info mb-3">
             <i class="fa-solid fa-star me-2"></i> Why PC Junkie?
         </h3>
+
         <p class="text-white-50 mb-4" style="max-width:650px; margin:0 auto;">
             Whether you’re a first-time builder or a seasoned enthusiast, we give you the tools
             to compare parts, track prices, and share your ultimate rigs.
@@ -56,6 +71,7 @@
                     </p>
                 </div>
             </div>
+
             <div class="col-md-4 mb-3">
                 <div class="card card-glow p-4 h-100">
                     <i class="fa-solid fa-users fa-2x text-info mb-3"></i>
@@ -65,6 +81,7 @@
                     </p>
                 </div>
             </div>
+
             <div class="col-md-4 mb-3">
                 <div class="card card-glow p-4 h-100">
                     <i class="fa-solid fa-headset fa-2x text-info mb-3"></i>
@@ -80,7 +97,6 @@
 
 @section Scripts {
     <script>
-        // Apply fade-in to all sections on load (if your CSS uses this class)
         document.querySelectorAll('section').forEach(sec => {
             sec.classList.add('fade-in');
         });

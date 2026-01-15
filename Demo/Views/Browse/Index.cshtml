@@ -1,0 +1,81 @@
+﻿@model BrowseIndexVm
+
+@{
+    ViewData["Title"] = "Browse Parts";
+    var selectedType = Model.Filter.PartType ?? Demo.Models.PartType.CPU;
+}
+
+<div class="container py-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2 class="mb-0">Browse Parts</h2>
+            <small class="text-muted">View items by category and filter by price, brand, and capability.</small>
+        </div>
+
+        <div>
+            <a class="btn btn-primary"
+               asp-action="Create"
+               asp-route-partType="@selectedType">
+                Add New Item
+            </a>
+        </div>
+    </div>
+
+    <!-- Part type tabs -->
+    <ul class="nav nav-pills mb-3">
+        @foreach (var t in (Demo.Models.PartType[])Enum.GetValues(typeof(Demo.Models.PartType)))
+        {
+            var isActive = selectedType == t;
+            <li class="nav-item me-2">
+                <a class="nav-link @(isActive ? "active" : "")"
+                   asp-action="Index"
+                   asp-route-partType="@t">
+                    @t
+                </a>
+            </li>
+        }
+    </ul>
+
+    <div class="row g-3">
+        <!-- Filters -->
+        <div class="col-12 col-lg-3">
+            <div class="card box-shadow">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Filters</h5>
+                    <partial name="_Filters" model="Model" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div class="col-12 col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="text-muted">
+                    Showing <strong>@Model.Items.Count</strong> item(s)
+                </div>
+
+                <div class="text-muted small">
+                    Category: <strong>@selectedType</strong>
+                </div>
+            </div>
+
+            @if (Model.Items.Count == 0)
+            {
+                <div class="alert alert-info">
+                    No items matched your filters.
+                </div>
+            }
+            else
+            {
+                <div class="row g-3">
+                    @foreach (var item in Model.Items)
+                    {
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <partial name="_PartCard" model="item" />
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

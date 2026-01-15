@@ -3,6 +3,18 @@ using Demo.Models; // Make sure this namespace contains User, Build, Contact, et
 
 namespace Demo.Models
 {
+    // ✅ Added enum here so the project compiles immediately
+    public enum PartType
+    {
+        CPU = 1,
+        GPU = 2,
+        RAM = 3,
+        Motherboard = 4,
+        PowerSupply = 5,
+        Storage = 6,
+        Case = 7
+    }
+
     public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)

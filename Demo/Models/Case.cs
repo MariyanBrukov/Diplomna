@@ -2,19 +2,11 @@
 
 namespace Demo.Models
 {
-    public class Case
+    public class Case : PartBase
     {
-        public int Id { get; set; }
-
-        [Required]
-        public string Name { get; set; }
-
         [Display(Name = "Form Factor")]
-        public string FormFactor { get; set; }
+        public string FormFactor { get; set; } = string.Empty;
 
-        public string Color { get; set; }
-
-        [DataType(DataType.Currency)]
-        public decimal Price { get; set; }
+        public string Color { get; set; } = string.Empty;
     }
 }
