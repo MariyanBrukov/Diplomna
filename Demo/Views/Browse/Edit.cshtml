@@ -1,0 +1,258 @@
+﻿@model Demo.Models.ViewModels.Browse.EditPartVm
+
+@{
+    ViewData["Title"] = $"Edit {Model.PartType}";
+}
+
+<div class="container py-4" style="color:#e9ecef;">
+    <div class="mb-3 d-flex flex-wrap gap-2">
+        <a class="btn btn-outline-info"
+           asp-action="Index"
+           asp-route-partType="@Model.PartType">
+            ← Back to Browse
+        </a>
+
+        <a class="btn btn-outline-secondary"
+           asp-action="Details"
+           asp-route-partType="@Model.PartType"
+           asp-route-id="@Model.Id">
+            View Details
+        </a>
+    </div>
+
+    <div class="card box-shadow" style="background:#111827; border:1px solid rgba(255,255,255,.12);">
+        <div class="card-body">
+
+            <h2 class="mb-1" style="color:#61dafb;">Edit @Model.PartType</h2>
+            <div class="text-white-50 mb-3">ID: <strong class="text-white">@Model.Id</strong></div>
+
+            <div asp-validation-summary="All" class="text-warning mb-3"></div>
+
+            <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" asp-for="PartType" />
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="ExistingImageUrl" />
+
+                <h5 class="mb-3" style="color:#61dafb;">General</h5>
+
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label asp-for="Name" class="form-label text-white-50"></label>
+                        <input asp-for="Name" class="form-control"
+                               style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label asp-for="Brand" class="form-label text-white-50"></label>
+                        <input asp-for="Brand" class="form-control"
+                               style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
+                        <span asp-validation-for="Brand" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label asp-for="Price" class="form-label text-white-50"></label>
+                        <input asp-for="Price" type="number" step="0.01" class="form-control"
+                               style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12">
+                        <label asp-for="Description" class="form-label text-white-50"></label>
+                        <textarea asp-for="Description" rows="4" class="form-control"
+                                  style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <hr class="my-4" style="border-color:rgba(255,255,255,.12);" />
+
+                <h5 class="mb-3" style="color:#61dafb;">Image</h5>
+
+                <div class="row g-3 align-items-start">
+                    <div class="col-12 col-lg-5">
+                        @if (!string.IsNullOrWhiteSpace(Model.ExistingImageUrl))
+                        {
+                            <img id="previewImg"
+                                 src="@Model.ExistingImageUrl"
+                                 alt="Current image"
+                                 class="img-fluid rounded border"
+                                 style="max-height:320px; object-fit:cover; border-color:rgba(255,255,255,.15)!important;" />
+                        }
+                        else
+                        {
+                            <div class="d-flex align-items-center justify-content-center rounded"
+                                 style="height:220px; background:#0b1220; border:1px dashed rgba(255,255,255,.25);">
+                                <span class="text-white-50">No image yet</span>
+                            </div>
+
+                            <img id="previewImg"
+                                 src=""
+                                 class="img-fluid rounded border d-none mt-2"
+                                 style="max-height:320px; object-fit:cover; border-color:rgba(255,255,255,.15)!important;" />
+                        }
+                    </div>
+
+                    <div class="col-12 col-lg-7">
+                        <label asp-for="ImageFile" class="form-label text-white-50">Upload new image (optional)</label>
+                        <input asp-for="ImageFile" type="file" accept="image/*"
+                               class="form-control"
+                               style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
+                        <span asp-validation-for="ImageFile" class="text-danger"></span>
+
+                        <div class="text-white-50 small mt-2">
+                            Uploading a new image will replace the existing one.
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4" style="border-color:rgba(255,255,255,.12);" />
+
+                <h5 class="mb-3" style="color:#61dafb;">Specifications</h5>
+
+                @* Type-specific *@
+                @if (Model.PartType == Demo.Models.PartType.CPU)
+                {
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="Socket" class="form-label text-white-50"></label>
+                            <input asp-for="Socket" class="form-control"
+                                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="Cores" class="form-label text-white-50"></label>
+                            <input asp-for="Cores" type="number" class="form-control"
+                                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="ClockSpeedGHz" class="form-label text-white-50">Clock (GHz)</label>
+                            <input asp-for="ClockSpeedGHz" type="number" step="0.1" class="form-control"
+                                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
+                        </div>
+                    </div>
+                }
+                else if (Model.PartType == Demo.Models.PartType.GPU)
+                {
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label asp-for="MemoryGB" class="form-label text-white-50">VRAM (GB)</label>
+                            <input asp-for="MemoryGB" type="number" class="form-control"
+                                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
+                        </div>
+                        <div class="col-md-8">
+                            <label asp-for="Chipset" class="form-label text-white-50"></label>
+                            <input asp-for="Chipset" class="form-control"
+                                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
+                        </div>
+                    </div>
+                }
+                else if (Model.PartType == Demo.Models.PartType.RAM)
+                {
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label asp-for="CapacityGB" class="form-label text-white-50">Capacity (GB)</label>
+                            <input asp-for="CapacityGB" type="number" class="form-control"
+                                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="RamType" class="form-label text-white-50">Type</label>
+                            <input asp-for="RamType" class="form-control"
+                                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="SpeedMHz" class="form-label text-white-50">Speed (MHz)</label>
+                            <input asp-for="SpeedMHz" type="number" class="form-control"
+                                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
+                        </div>
+                    </div>
+                }
+                else if (Model.PartType == Demo.Models.PartType.Motherboard)
+                {
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="Socket" class="form-label text-white-50"></label>
+                            <input asp-for="Socket" class="form-control"
+                                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="FormFactor" class="form-label text-white-50"></label>
+                            <input asp-for="FormFactor" class="form-control"
+                                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
+                        </div>
+                    </div>
+                }
+                else if (Model.PartType == Demo.Models.PartType.PowerSupply)
+                {
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="Wattage" class="form-label text-white-50"></label>
+                            <input asp-for="Wattage" type="number" class="form-control"
+                                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Efficiency" class="form-label text-white-50"></label>
+                            <input asp-for="Efficiency" class="form-control"
+                                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
+                        </div>
+                    </div>
+                }
+                else if (Model.PartType == Demo.Models.PartType.Storage)
+                {
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="StorageType" class="form-label text-white-50">Type</label>
+                            <input asp-for="StorageType" class="form-control"
+                                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="CapacityGB" class="form-label text-white-50">Capacity (GB)</label>
+                            <input asp-for="CapacityGB" type="number" class="form-control"
+                                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
+                        </div>
+                    </div>
+                }
+                else if (Model.PartType == Demo.Models.PartType.Case)
+                {
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="FormFactor" class="form-label text-white-50"></label>
+                            <input asp-for="FormFactor" class="form-control"
+                                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Color" class="form-label text-white-50"></label>
+                            <input asp-for="Color" class="form-control"
+                                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
+                        </div>
+                    </div>
+                }
+
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-info text-dark fw-semibold">Save Changes</button>
+                    <a asp-action="Details" asp-route-partType="@Model.PartType" asp-route-id="@Model.Id"
+                       class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const input = document.querySelector('input[type="file"][name="ImageFile"]');
+        input?.addEventListener('change', (e) => {
+            const f = e.target.files?.[0];
+            if (!f) return;
+            const url = URL.createObjectURL(f);
+            const img = document.getElementById('previewImg');
+            if (img) {
+                img.classList.remove('d-none');
+                img.src = url;
+            }
+        });
+    </script>
+}

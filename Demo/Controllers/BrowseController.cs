@@ -2,74 +2,66 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Demo.Models;
-using Demo.ViewModels.Browse;
+using Demo.Models.ViewModels.Browse;
+
 
 namespace Demo.Controllers
 {
     public class BrowseController : Controller
     {
         private readonly ApplicationDbContext _db;
+        private readonly IWebHostEnvironment _env;
 
-        public BrowseController(ApplicationDbContext db)
+        public BrowseController(ApplicationDbContext db, IWebHostEnvironment env)
         {
             _db = db;
+            _env = env;
         }
 
-        // /Browse?partType=CPU&minPrice=100&maxPrice=500&brand=Intel&coresMin=6
+        // /Browse?partType=CPU&minPrice=100&maxPrice=500&brand=Intel&coresMin=6&search=ryzen&sort=price_desc
         [HttpGet]
         public async Task<IActionResult> Index([FromQuery] BrowseFilterVm filter)
         {
-            // Default to CPU if not provided
             if (!filter.PartType.HasValue)
                 filter.PartType = PartType.CPU;
 
             var itemsQuery = BuildFilteredQuery(filter);
+            itemsQuery = ApplySorting(itemsQuery, filter.Sort);
 
             var brands = await GetBrandsForPartTypeAsync(filter.PartType.Value);
 
             var vm = new BrowseIndexVm
             {
                 Filter = filter,
-                Items = await itemsQuery
-                    .OrderBy(x => x.Price)
-                    .ThenBy(x => x.Name)
-                    .ToListAsync(),
-                BrandOptions = brands
-                    .Select(b => new SelectListItem { Value = b, Text = b })
-                    .ToList()
+                Items = await itemsQuery.ToListAsync(),
+                BrandOptions = brands.Select(b => new SelectListItem { Value = b, Text = b }).ToList()
             };
 
             return View(vm);
         }
 
-        // /Browse/Details?partType=GPU&id=5
         [HttpGet]
         public async Task<IActionResult> Details(PartType partType, int id)
         {
             var details = await LoadDetailsAsync(partType, id);
             if (details == null) return NotFound();
-
             return View(details);
         }
 
-        // /Browse/Create?partType=CPU
+        // ---------------------------
+        // CREATE (still URL-based unless you upgraded)
+        // ---------------------------
         [HttpGet]
         public IActionResult Create(PartType partType)
         {
-            var vm = new CreatePartVm
-            {
-                PartType = partType
-            };
-
-            return View(vm);
+            return View(new CreatePartVm { PartType = partType });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreatePartVm vm)
         {
-            if (!ModelState.IsValid)
-                return View(vm);
+            if (!ModelState.IsValid) return View(vm);
 
             switch (vm.PartType)
             {
@@ -78,9 +70,9 @@ namespace Demo.Controllers
                     {
                         Name = vm.Name,
                         Brand = vm.Brand,
+                        Price = vm.Price,
                         Description = vm.Description,
                         ImageUrl = vm.ImageUrl,
-                        Price = vm.Price,
                         Socket = vm.Socket ?? "",
                         Cores = vm.Cores ?? 0,
                         ClockSpeedGHz = vm.ClockSpeedGHz ?? 0
@@ -92,9 +84,9 @@ namespace Demo.Controllers
                     {
                         Name = vm.Name,
                         Brand = vm.Brand,
+                        Price = vm.Price,
                         Description = vm.Description,
                         ImageUrl = vm.ImageUrl,
-                        Price = vm.Price,
                         MemoryGB = vm.MemoryGB ?? 0,
                         Chipset = vm.Chipset ?? ""
                     });
@@ -105,9 +97,9 @@ namespace Demo.Controllers
                     {
                         Name = vm.Name,
                         Brand = vm.Brand,
+                        Price = vm.Price,
                         Description = vm.Description,
                         ImageUrl = vm.ImageUrl,
-                        Price = vm.Price,
                         CapacityGB = vm.CapacityGB ?? 0,
                         Type = vm.RamType ?? "",
                         SpeedMHz = vm.SpeedMHz ?? 0
@@ -119,9 +111,9 @@ namespace Demo.Controllers
                     {
                         Name = vm.Name,
                         Brand = vm.Brand,
+                        Price = vm.Price,
                         Description = vm.Description,
                         ImageUrl = vm.ImageUrl,
-                        Price = vm.Price,
                         Socket = vm.Socket ?? "",
                         FormFactor = vm.FormFactor ?? ""
                     });
@@ -132,9 +124,9 @@ namespace Demo.Controllers
                     {
                         Name = vm.Name,
                         Brand = vm.Brand,
+                        Price = vm.Price,
                         Description = vm.Description,
                         ImageUrl = vm.ImageUrl,
-                        Price = vm.Price,
                         Wattage = vm.Wattage ?? 0,
                         Efficiency = vm.Efficiency ?? ""
                     });
@@ -145,9 +137,9 @@ namespace Demo.Controllers
                     {
                         Name = vm.Name,
                         Brand = vm.Brand,
+                        Price = vm.Price,
                         Description = vm.Description,
                         ImageUrl = vm.ImageUrl,
-                        Price = vm.Price,
                         Type = vm.StorageType ?? "",
                         CapacityGB = vm.CapacityGB ?? 0
                     });
@@ -158,9 +150,9 @@ namespace Demo.Controllers
                     {
                         Name = vm.Name,
                         Brand = vm.Brand,
+                        Price = vm.Price,
                         Description = vm.Description,
                         ImageUrl = vm.ImageUrl,
-                        Price = vm.Price,
                         FormFactor = vm.FormFactor ?? "",
                         Color = vm.Color ?? ""
                     });
@@ -171,29 +163,195 @@ namespace Demo.Controllers
             }
 
             await _db.SaveChangesAsync();
-
             return RedirectToAction(nameof(Index), new { partType = vm.PartType });
+        }
+
+        // ---------------------------
+        // EDIT (GET)
+        // ---------------------------
+        [HttpGet]
+        public async Task<IActionResult> Edit(PartType partType, int id)
+        {
+            var vm = await LoadEditVmAsync(partType, id);
+            if (vm == null) return NotFound();
+            return View(vm);
+        }
+
+        // ---------------------------
+        // EDIT (POST) + Upload
+        // ---------------------------
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(EditPartVm vm)
+        {
+            if (!ModelState.IsValid) return View(vm);
+
+            string? newImageUrl = vm.ExistingImageUrl;
+
+            if (vm.ImageFile != null && vm.ImageFile.Length > 0)
+            {
+                try
+                {
+                    newImageUrl = await SavePartImageAsync(vm.PartType, vm.ImageFile);
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(nameof(vm.ImageFile), "Upload failed: " + ex.Message);
+                    vm.ExistingImageUrl = newImageUrl;
+                    return View(vm);
+                }
+            }
+
+            try
+            {
+                switch (vm.PartType)
+                {
+                    case PartType.CPU:
+                        {
+                            var x = await _db.CPUs.FirstOrDefaultAsync(p => p.Id == vm.Id);
+                            if (x == null) return NotFound();
+
+                            x.Name = vm.Name;
+                            x.Brand = vm.Brand;
+                            x.Price = vm.Price;
+                            x.Description = vm.Description;
+                            x.ImageUrl = newImageUrl;
+                            x.Socket = vm.Socket ?? "";
+                            x.Cores = vm.Cores ?? 0;
+                            x.ClockSpeedGHz = vm.ClockSpeedGHz ?? 0;
+                            break;
+                        }
+                    case PartType.GPU:
+                        {
+                            var x = await _db.GPUs.FirstOrDefaultAsync(p => p.Id == vm.Id);
+                            if (x == null) return NotFound();
+
+                            x.Name = vm.Name;
+                            x.Brand = vm.Brand;
+                            x.Price = vm.Price;
+                            x.Description = vm.Description;
+                            x.ImageUrl = newImageUrl;
+                            x.MemoryGB = vm.MemoryGB ?? 0;
+                            x.Chipset = vm.Chipset ?? "";
+                            break;
+                        }
+                    case PartType.RAM:
+                        {
+                            var x = await _db.RAMs.FirstOrDefaultAsync(p => p.Id == vm.Id);
+                            if (x == null) return NotFound();
+
+                            x.Name = vm.Name;
+                            x.Brand = vm.Brand;
+                            x.Price = vm.Price;
+                            x.Description = vm.Description;
+                            x.ImageUrl = newImageUrl;
+                            x.CapacityGB = vm.CapacityGB ?? 0;
+                            x.Type = vm.RamType ?? "";
+                            x.SpeedMHz = vm.SpeedMHz ?? 0;
+                            break;
+                        }
+                    case PartType.Motherboard:
+                        {
+                            var x = await _db.Motherboards.FirstOrDefaultAsync(p => p.Id == vm.Id);
+                            if (x == null) return NotFound();
+
+                            x.Name = vm.Name;
+                            x.Brand = vm.Brand;
+                            x.Price = vm.Price;
+                            x.Description = vm.Description;
+                            x.ImageUrl = newImageUrl;
+                            x.Socket = vm.Socket ?? "";
+                            x.FormFactor = vm.FormFactor ?? "";
+                            break;
+                        }
+                    case PartType.PowerSupply:
+                        {
+                            var x = await _db.PowerSupplies.FirstOrDefaultAsync(p => p.Id == vm.Id);
+                            if (x == null) return NotFound();
+
+                            x.Name = vm.Name;
+                            x.Brand = vm.Brand;
+                            x.Price = vm.Price;
+                            x.Description = vm.Description;
+                            x.ImageUrl = newImageUrl;
+                            x.Wattage = vm.Wattage ?? 0;
+                            x.Efficiency = vm.Efficiency ?? "";
+                            break;
+                        }
+                    case PartType.Storage:
+                        {
+                            var x = await _db.Storages.FirstOrDefaultAsync(p => p.Id == vm.Id);
+                            if (x == null) return NotFound();
+
+                            x.Name = vm.Name;
+                            x.Brand = vm.Brand;
+                            x.Price = vm.Price;
+                            x.Description = vm.Description;
+                            x.ImageUrl = newImageUrl;
+                            x.Type = vm.StorageType ?? "";
+                            x.CapacityGB = vm.CapacityGB ?? 0;
+                            break;
+                        }
+                    case PartType.Case:
+                        {
+                            var x = await _db.Cases.FirstOrDefaultAsync(p => p.Id == vm.Id);
+                            if (x == null) return NotFound();
+
+                            x.Name = vm.Name;
+                            x.Brand = vm.Brand;
+                            x.Price = vm.Price;
+                            x.Description = vm.Description;
+                            x.ImageUrl = newImageUrl;
+                            x.FormFactor = vm.FormFactor ?? "";
+                            x.Color = vm.Color ?? "";
+                            break;
+                        }
+                    default:
+                        return BadRequest("Unsupported part type.");
+                }
+
+                await _db.SaveChangesAsync();
+                return RedirectToAction(nameof(Details), new { partType = vm.PartType, id = vm.Id });
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Save failed: " + ex.Message);
+                vm.ExistingImageUrl = newImageUrl;
+                return View(vm);
+            }
         }
 
         // ============================================================
         // Helpers
         // ============================================================
 
+        private IQueryable<BrowseItemVm> ApplySorting(IQueryable<BrowseItemVm> q, string? sort)
+        {
+            return sort switch
+            {
+                "price_desc" => q.OrderByDescending(x => x.Price).ThenBy(x => x.Name),
+                "name_asc" => q.OrderBy(x => x.Name),
+                "price_asc" => q.OrderBy(x => x.Price).ThenBy(x => x.Name),
+                _ => q.OrderBy(x => x.Price).ThenBy(x => x.Name)
+            };
+        }
+
         private IQueryable<BrowseItemVm> BuildFilteredQuery(BrowseFilterVm f)
         {
             bool HasMin() => f.MinPrice.HasValue;
             bool HasMax() => f.MaxPrice.HasValue;
             bool HasBrand() => !string.IsNullOrWhiteSpace(f.Brand);
+            bool HasSearch() => !string.IsNullOrWhiteSpace(f.Search);
 
             switch (f.PartType)
             {
                 case PartType.CPU:
                     {
                         var q = _db.CPUs.AsNoTracking().Where(x => x.IsActive);
-
                         if (HasMin()) q = q.Where(x => x.Price >= f.MinPrice!.Value);
                         if (HasMax()) q = q.Where(x => x.Price <= f.MaxPrice!.Value);
                         if (HasBrand()) q = q.Where(x => x.Brand == f.Brand);
+                        if (HasSearch()) q = q.Where(x => x.Name.Contains(f.Search!));
 
                         if (f.CoresMin.HasValue) q = q.Where(x => x.Cores >= f.CoresMin.Value);
                         if (!string.IsNullOrWhiteSpace(f.Socket)) q = q.Where(x => x.Socket == f.Socket);
@@ -213,10 +371,10 @@ namespace Demo.Controllers
                 case PartType.GPU:
                     {
                         var q = _db.GPUs.AsNoTracking().Where(x => x.IsActive);
-
                         if (HasMin()) q = q.Where(x => x.Price >= f.MinPrice!.Value);
                         if (HasMax()) q = q.Where(x => x.Price <= f.MaxPrice!.Value);
                         if (HasBrand()) q = q.Where(x => x.Brand == f.Brand);
+                        if (HasSearch()) q = q.Where(x => x.Name.Contains(f.Search!));
 
                         if (f.MemoryGBMin.HasValue) q = q.Where(x => x.MemoryGB >= f.MemoryGBMin.Value);
                         if (!string.IsNullOrWhiteSpace(f.Chipset)) q = q.Where(x => x.Chipset.Contains(f.Chipset));
@@ -236,10 +394,10 @@ namespace Demo.Controllers
                 case PartType.RAM:
                     {
                         var q = _db.RAMs.AsNoTracking().Where(x => x.IsActive);
-
                         if (HasMin()) q = q.Where(x => x.Price >= f.MinPrice!.Value);
                         if (HasMax()) q = q.Where(x => x.Price <= f.MaxPrice!.Value);
                         if (HasBrand()) q = q.Where(x => x.Brand == f.Brand);
+                        if (HasSearch()) q = q.Where(x => x.Name.Contains(f.Search!));
 
                         if (f.CapacityGBMin.HasValue) q = q.Where(x => x.CapacityGB >= f.CapacityGBMin.Value);
                         if (!string.IsNullOrWhiteSpace(f.RamType)) q = q.Where(x => x.Type == f.RamType);
@@ -260,10 +418,10 @@ namespace Demo.Controllers
                 case PartType.Motherboard:
                     {
                         var q = _db.Motherboards.AsNoTracking().Where(x => x.IsActive);
-
                         if (HasMin()) q = q.Where(x => x.Price >= f.MinPrice!.Value);
                         if (HasMax()) q = q.Where(x => x.Price <= f.MaxPrice!.Value);
                         if (HasBrand()) q = q.Where(x => x.Brand == f.Brand);
+                        if (HasSearch()) q = q.Where(x => x.Name.Contains(f.Search!));
 
                         if (!string.IsNullOrWhiteSpace(f.Socket)) q = q.Where(x => x.Socket == f.Socket);
                         if (!string.IsNullOrWhiteSpace(f.FormFactor)) q = q.Where(x => x.FormFactor == f.FormFactor);
@@ -283,10 +441,10 @@ namespace Demo.Controllers
                 case PartType.PowerSupply:
                     {
                         var q = _db.PowerSupplies.AsNoTracking().Where(x => x.IsActive);
-
                         if (HasMin()) q = q.Where(x => x.Price >= f.MinPrice!.Value);
                         if (HasMax()) q = q.Where(x => x.Price <= f.MaxPrice!.Value);
                         if (HasBrand()) q = q.Where(x => x.Brand == f.Brand);
+                        if (HasSearch()) q = q.Where(x => x.Name.Contains(f.Search!));
 
                         if (f.WattageMin.HasValue) q = q.Where(x => x.Wattage >= f.WattageMin.Value);
                         if (!string.IsNullOrWhiteSpace(f.Efficiency)) q = q.Where(x => x.Efficiency == f.Efficiency);
@@ -306,10 +464,10 @@ namespace Demo.Controllers
                 case PartType.Storage:
                     {
                         var q = _db.Storages.AsNoTracking().Where(x => x.IsActive);
-
                         if (HasMin()) q = q.Where(x => x.Price >= f.MinPrice!.Value);
                         if (HasMax()) q = q.Where(x => x.Price <= f.MaxPrice!.Value);
                         if (HasBrand()) q = q.Where(x => x.Brand == f.Brand);
+                        if (HasSearch()) q = q.Where(x => x.Name.Contains(f.Search!));
 
                         if (!string.IsNullOrWhiteSpace(f.StorageType)) q = q.Where(x => x.Type == f.StorageType);
                         if (f.CapacityGBMin.HasValue) q = q.Where(x => x.CapacityGB >= f.CapacityGBMin.Value);
@@ -329,10 +487,10 @@ namespace Demo.Controllers
                 case PartType.Case:
                     {
                         var q = _db.Cases.AsNoTracking().Where(x => x.IsActive);
-
                         if (HasMin()) q = q.Where(x => x.Price >= f.MinPrice!.Value);
                         if (HasMax()) q = q.Where(x => x.Price <= f.MaxPrice!.Value);
                         if (HasBrand()) q = q.Where(x => x.Brand == f.Brand);
+                        if (HasSearch()) q = q.Where(x => x.Name.Contains(f.Search!));
 
                         if (!string.IsNullOrWhiteSpace(f.FormFactor)) q = q.Where(x => x.FormFactor == f.FormFactor);
                         if (!string.IsNullOrWhiteSpace(f.Color)) q = q.Where(x => x.Color == f.Color);
@@ -383,154 +541,131 @@ namespace Demo.Controllers
                     {
                         var x = await _db.CPUs.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id && p.IsActive);
                         if (x == null) return null;
-                        return new PartDetailsVm
-                        {
-                            PartType = partType,
-                            Id = x.Id,
-                            Name = x.Name,
-                            Brand = x.Brand,
-                            Description = x.Description,
-                            ImageUrl = x.ImageUrl,
-                            Price = x.Price,
-                            Specs = new Dictionary<string, string>
-                            {
-                                ["Socket"] = x.Socket,
-                                ["Cores"] = x.Cores.ToString(),
-                                ["Clock (GHz)"] = x.ClockSpeedGHz.ToString()
-                            }
-                        };
+                        return new PartDetailsVm { PartType = partType, Id = x.Id, Name = x.Name, Brand = x.Brand, Description = x.Description, ImageUrl = x.ImageUrl, Price = x.Price };
                     }
-
                 case PartType.GPU:
                     {
                         var x = await _db.GPUs.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id && p.IsActive);
                         if (x == null) return null;
-                        return new PartDetailsVm
-                        {
-                            PartType = partType,
-                            Id = x.Id,
-                            Name = x.Name,
-                            Brand = x.Brand,
-                            Description = x.Description,
-                            ImageUrl = x.ImageUrl,
-                            Price = x.Price,
-                            Specs = new Dictionary<string, string>
-                            {
-                                ["Memory (GB)"] = x.MemoryGB.ToString(),
-                                ["Chipset"] = x.Chipset
-                            }
-                        };
+                        return new PartDetailsVm { PartType = partType, Id = x.Id, Name = x.Name, Brand = x.Brand, Description = x.Description, ImageUrl = x.ImageUrl, Price = x.Price };
                     }
-
                 case PartType.RAM:
                     {
                         var x = await _db.RAMs.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id && p.IsActive);
                         if (x == null) return null;
-                        return new PartDetailsVm
-                        {
-                            PartType = partType,
-                            Id = x.Id,
-                            Name = x.Name,
-                            Brand = x.Brand,
-                            Description = x.Description,
-                            ImageUrl = x.ImageUrl,
-                            Price = x.Price,
-                            Specs = new Dictionary<string, string>
-                            {
-                                ["Capacity (GB)"] = x.CapacityGB.ToString(),
-                                ["Type"] = x.Type,
-                                ["Speed (MHz)"] = x.SpeedMHz.ToString()
-                            }
-                        };
+                        return new PartDetailsVm { PartType = partType, Id = x.Id, Name = x.Name, Brand = x.Brand, Description = x.Description, ImageUrl = x.ImageUrl, Price = x.Price };
                     }
-
                 case PartType.Motherboard:
                     {
                         var x = await _db.Motherboards.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id && p.IsActive);
                         if (x == null) return null;
-                        return new PartDetailsVm
-                        {
-                            PartType = partType,
-                            Id = x.Id,
-                            Name = x.Name,
-                            Brand = x.Brand,
-                            Description = x.Description,
-                            ImageUrl = x.ImageUrl,
-                            Price = x.Price,
-                            Specs = new Dictionary<string, string>
-                            {
-                                ["Socket"] = x.Socket,
-                                ["Form Factor"] = x.FormFactor
-                            }
-                        };
+                        return new PartDetailsVm { PartType = partType, Id = x.Id, Name = x.Name, Brand = x.Brand, Description = x.Description, ImageUrl = x.ImageUrl, Price = x.Price };
                     }
-
                 case PartType.PowerSupply:
                     {
                         var x = await _db.PowerSupplies.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id && p.IsActive);
                         if (x == null) return null;
-                        return new PartDetailsVm
-                        {
-                            PartType = partType,
-                            Id = x.Id,
-                            Name = x.Name,
-                            Brand = x.Brand,
-                            Description = x.Description,
-                            ImageUrl = x.ImageUrl,
-                            Price = x.Price,
-                            Specs = new Dictionary<string, string>
-                            {
-                                ["Wattage"] = x.Wattage.ToString(),
-                                ["Efficiency"] = x.Efficiency
-                            }
-                        };
+                        return new PartDetailsVm { PartType = partType, Id = x.Id, Name = x.Name, Brand = x.Brand, Description = x.Description, ImageUrl = x.ImageUrl, Price = x.Price };
                     }
-
                 case PartType.Storage:
                     {
                         var x = await _db.Storages.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id && p.IsActive);
                         if (x == null) return null;
-                        return new PartDetailsVm
-                        {
-                            PartType = partType,
-                            Id = x.Id,
-                            Name = x.Name,
-                            Brand = x.Brand,
-                            Description = x.Description,
-                            ImageUrl = x.ImageUrl,
-                            Price = x.Price,
-                            Specs = new Dictionary<string, string>
-                            {
-                                ["Type"] = x.Type,
-                                ["Capacity (GB)"] = x.CapacityGB.ToString()
-                            }
-                        };
+                        return new PartDetailsVm { PartType = partType, Id = x.Id, Name = x.Name, Brand = x.Brand, Description = x.Description, ImageUrl = x.ImageUrl, Price = x.Price };
                     }
-
                 case PartType.Case:
                     {
                         var x = await _db.Cases.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id && p.IsActive);
                         if (x == null) return null;
-                        return new PartDetailsVm
-                        {
-                            PartType = partType,
-                            Id = x.Id,
-                            Name = x.Name,
-                            Brand = x.Brand,
-                            Description = x.Description,
-                            ImageUrl = x.ImageUrl,
-                            Price = x.Price,
-                            Specs = new Dictionary<string, string>
-                            {
-                                ["Form Factor"] = x.FormFactor,
-                                ["Color"] = x.Color
-                            }
-                        };
+                        return new PartDetailsVm { PartType = partType, Id = x.Id, Name = x.Name, Brand = x.Brand, Description = x.Description, ImageUrl = x.ImageUrl, Price = x.Price };
                     }
-
                 default:
                     return null;
             }
+        }
+
+        private async Task<EditPartVm?> LoadEditVmAsync(PartType partType, int id)
+        {
+            switch (partType)
+            {
+                case PartType.CPU:
+                    {
+                        var x = await _db.CPUs.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+                        if (x == null) return null;
+                        return new EditPartVm { PartType = partType, Id = x.Id, Name = x.Name, Brand = x.Brand, Price = x.Price, Description = x.Description, ExistingImageUrl = x.ImageUrl, Socket = x.Socket, Cores = x.Cores, ClockSpeedGHz = x.ClockSpeedGHz };
+                    }
+                case PartType.GPU:
+                    {
+                        var x = await _db.GPUs.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+                        if (x == null) return null;
+                        return new EditPartVm { PartType = partType, Id = x.Id, Name = x.Name, Brand = x.Brand, Price = x.Price, Description = x.Description, ExistingImageUrl = x.ImageUrl, MemoryGB = x.MemoryGB, Chipset = x.Chipset };
+                    }
+                case PartType.RAM:
+                    {
+                        var x = await _db.RAMs.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+                        if (x == null) return null;
+                        return new EditPartVm { PartType = partType, Id = x.Id, Name = x.Name, Brand = x.Brand, Price = x.Price, Description = x.Description, ExistingImageUrl = x.ImageUrl, CapacityGB = x.CapacityGB, RamType = x.Type, SpeedMHz = x.SpeedMHz };
+                    }
+                case PartType.Motherboard:
+                    {
+                        var x = await _db.Motherboards.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+                        if (x == null) return null;
+                        return new EditPartVm { PartType = partType, Id = x.Id, Name = x.Name, Brand = x.Brand, Price = x.Price, Description = x.Description, ExistingImageUrl = x.ImageUrl, Socket = x.Socket, FormFactor = x.FormFactor };
+                    }
+                case PartType.PowerSupply:
+                    {
+                        var x = await _db.PowerSupplies.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+                        if (x == null) return null;
+                        return new EditPartVm { PartType = partType, Id = x.Id, Name = x.Name, Brand = x.Brand, Price = x.Price, Description = x.Description, ExistingImageUrl = x.ImageUrl, Wattage = x.Wattage, Efficiency = x.Efficiency };
+                    }
+                case PartType.Storage:
+                    {
+                        var x = await _db.Storages.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+                        if (x == null) return null;
+                        return new EditPartVm { PartType = partType, Id = x.Id, Name = x.Name, Brand = x.Brand, Price = x.Price, Description = x.Description, ExistingImageUrl = x.ImageUrl, StorageType = x.Type, CapacityGB = x.CapacityGB };
+                    }
+                case PartType.Case:
+                    {
+                        var x = await _db.Cases.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+                        if (x == null) return null;
+                        return new EditPartVm { PartType = partType, Id = x.Id, Name = x.Name, Brand = x.Brand, Price = x.Price, Description = x.Description, ExistingImageUrl = x.ImageUrl, FormFactor = x.FormFactor, Color = x.Color };
+                    }
+                default:
+                    return null;
+            }
+        }
+
+        private async Task<string> SavePartImageAsync(PartType partType, IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                throw new InvalidOperationException("No file uploaded.");
+
+            var allowed = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ".jpg", ".jpeg", ".png", ".webp"
+            };
+
+            var ext = Path.GetExtension(file.FileName);
+            if (string.IsNullOrWhiteSpace(ext) || !allowed.Contains(ext))
+                throw new InvalidOperationException("Only JPG, PNG, or WEBP images allowed.");
+
+            var webRoot = _env.WebRootPath;
+            if (string.IsNullOrWhiteSpace(webRoot))
+                webRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+
+            var folderName = partType.ToString().ToLowerInvariant();
+            var relDir = Path.Combine("images", "parts", folderName);
+            var absDir = Path.Combine(webRoot, relDir);
+
+            Directory.CreateDirectory(absDir);
+
+            var fileName = $"{Guid.NewGuid():N}{ext}";
+            var absPath = Path.Combine(absDir, fileName);
+
+            using var stream = new FileStream(absPath, FileMode.Create, FileAccess.Write);
+            await file.CopyToAsync(stream);
+
+            return "/" + Path.Combine(relDir, fileName).Replace("\\", "/");
         }
     }
 }

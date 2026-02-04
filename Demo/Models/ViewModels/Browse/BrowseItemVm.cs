@@ -1,6 +1,6 @@
 ﻿using Demo.Models;
 
-namespace Demo.ViewModels.Browse
+namespace Demo.Models.ViewModels.Browse
 {
     public class BrowseItemVm
     {

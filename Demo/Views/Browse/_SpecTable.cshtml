@@ -1,19 +1,24 @@
-﻿@model PartDetailsVm
+﻿@model global::Demo.Models.ViewModels.Browse.PartDetailsVm
 
 @if (Model.Specs == null || Model.Specs.Count == 0)
 {
-    <div class="text-muted">No specs available.</div>
+    <div class="text-white-50">No specs available.</div>
 }
 else
 {
     <div class="table-responsive">
-        <table class="table table-sm table-bordered">
+        <table class="table table-sm table-bordered align-middle mb-0"
+               style="border-color: rgba(255,255,255,.12);">
             <tbody>
                 @foreach (var kv in Model.Specs)
                 {
                     <tr>
-                        <th style="width: 40%;">@kv.Key</th>
-                        <td>@kv.Value</td>
+                        <th style="width:40%; color:#e9ecef; background:#0b1220; border-color:rgba(255,255,255,.12);">
+                            @kv.Key
+                        </th>
+                        <td style="color:#e9ecef; background:#111827; border-color:rgba(255,255,255,.12);">
+                            @kv.Value
+                        </td>
                     </tr>
                 }
             </tbody>

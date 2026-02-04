@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using Demo.Models;
 using Demo.Models.ViewModels;
 
@@ -17,7 +18,7 @@ namespace Demo.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-            return View();
+            return View(new RegisterViewModel());
         }
 
         // POST: /Account/Register
@@ -25,37 +26,35 @@ namespace Demo.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return View(model);
+
+            // Check if email is already registered
+            var emailExists = _context.Users.Any(u => u.Email == model.Email);
+            if (emailExists)
             {
-                // Check if email is already registered
-                if (_context.Users.Any(u => u.Email == model.Email))
-                {
-                    ModelState.AddModelError("", "Email already exists.");
-                    return View(model);
-                }
-
-                var user = new User
-                {
-                    Username = model.Username,
-                    Email = model.Email,
-                    Password = model.Password // ⚠️ In production, hash passwords!
-                };
-
-                _context.Users.Add(user);
-                _context.SaveChanges();
-
-                // Redirect to Login after successful registration
-                return RedirectToAction("Login");
+                ModelState.AddModelError(nameof(model.Email), "Email already exists.");
+                return View(model);
             }
 
-            return View(model);
+            var user = new User
+            {
+                Username = model.Username,
+                Email = model.Email,
+                Password = model.Password // ⚠️ hash in production
+            };
+
+            _context.Users.Add(user);
+            _context.SaveChanges();
+
+            return RedirectToAction(nameof(Login));
         }
 
         // GET: /Account/Login
         [HttpGet]
         public IActionResult Login()
         {
-            return View();
+            return View(new LoginViewModel());
         }
 
         // POST: /Account/Login
@@ -63,22 +62,29 @@ namespace Demo.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Login(LoginViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = _context.Users
+                .FirstOrDefault(u => u.Email == model.Email && u.Password == model.Password);
+
+            if (user != null)
             {
-                var user = _context.Users
-                    .FirstOrDefault(u => u.Email == model.Email && u.Password == model.Password);
-
-                if (user != null)
-                {
-                    // In a real app, set a session or cookie
-                    TempData["Username"] = user.Username;
-                    return RedirectToAction("Index", "Home");
-                }
-
-                ModelState.AddModelError("", "Invalid email or password.");
+                // simple TempData "login" (not real auth)
+                TempData["Username"] = user.Username;
+                return RedirectToAction("Index", "Home");
             }
 
+            ModelState.AddModelError("", "Invalid email or password.");
             return View(model);
+        }
+
+        // Optional: logout for TempData approach
+        [HttpGet]
+        public IActionResult Logout()
+        {
+            TempData.Remove("Username");
+            return RedirectToAction("Index", "Home");
         }
     }
 }

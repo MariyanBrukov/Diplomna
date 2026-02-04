@@ -1,11 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Demo.Models;
 
-namespace Demo.ViewModels.Browse
+namespace Demo.Models.ViewModels.Browse
 {
     public class BrowseFilterVm
     {
         public PartType? PartType { get; set; }
+
+        public string? Search { get; set; }
+        public string? Sort { get; set; } // "price_asc", "price_desc", "name_asc"
 
         [Display(Name = "Min Price")]
         public decimal? MinPrice { get; set; }

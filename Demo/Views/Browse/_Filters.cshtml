@@ -1,33 +1,55 @@
-﻿@model BrowseIndexVm
+﻿@model Demo.Models.ViewModels.Browse.BrowseIndexVm
 
 <form method="get" asp-action="Index">
     <input type="hidden" name="partType" value="@(Model.Filter.PartType ?? Demo.Models.PartType.CPU)" />
 
     <div class="mb-3">
-        <label class="form-label">Min Price</label>
-        <input class="form-control" type="number" step="0.01" name="minPrice" value="@Model.Filter.MinPrice" />
+        <label class="form-label text-white-50">Search</label>
+        <input class="form-control" name="search" value="@Model.Filter.Search"
+               placeholder="Name contains..."
+               style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
     </div>
 
     <div class="mb-3">
-        <label class="form-label">Max Price</label>
-        <input class="form-control" type="number" step="0.01" name="maxPrice" value="@Model.Filter.MaxPrice" />
+        <label class="form-label text-white-50">Sort</label>
+        <select class="form-select" name="sort"
+                style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);">
+            <option value="" selected="@(string.IsNullOrWhiteSpace(Model.Filter.Sort) ? "selected" : null)">Price (Low → High)</option>
+            <option value="price_desc" selected="@(Model.Filter.Sort == "price_desc" ? "selected" : null)">Price (High → Low)</option>
+            <option value="name_asc" selected="@(Model.Filter.Sort == "name_asc" ? "selected" : null)">Name (A → Z)</option>
+        </select>
+    </div>
+
+    <hr style="border-color:rgba(255,255,255,.12);" />
+
+    <div class="mb-3">
+        <label class="form-label text-white-50">Min Price</label>
+        <input class="form-control" type="number" step="0.01" name="minPrice" value="@Model.Filter.MinPrice"
+               style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
     </div>
 
     <div class="mb-3">
-        <label class="form-label">Brand</label>
-        <select class="form-select" name="brand">
-            <option value="">All</option>
+        <label class="form-label text-white-50">Max Price</label>
+        <input class="form-control" type="number" step="0.01" name="maxPrice" value="@Model.Filter.MaxPrice"
+               style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label text-white-50">Brand</label>
+        <select class="form-select" name="brand"
+                style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);">
+            <option value="" selected="@(string.IsNullOrWhiteSpace(Model.Filter.Brand) ? "selected" : null)">All</option>
             @foreach (var opt in Model.BrandOptions)
             {
-                var selected = (opt.Value == Model.Filter.Brand) ? "selected" : null;
-                <option value="@opt.Value" selected="@selected">@opt.Text</option>
+                <option value="@opt.Value" selected="@(opt.Value == Model.Filter.Brand ? "selected" : null)">
+                    @opt.Text
+                </option>
             }
         </select>
     </div>
 
-    <hr />
+    <hr style="border-color:rgba(255,255,255,.12);" />
 
-    <!-- Capability filters: show based on selected type -->
     @{
         var pt = Model.Filter.PartType ?? Demo.Models.PartType.CPU;
     }
@@ -35,87 +57,102 @@
     @if (pt == Demo.Models.PartType.CPU)
     {
         <div class="mb-3">
-            <label class="form-label">Socket</label>
-            <input class="form-control" name="socket" value="@Model.Filter.Socket" placeholder="e.g. AM5, LGA1700" />
+            <label class="form-label text-white-50">Socket</label>
+            <input class="form-control" name="socket" value="@Model.Filter.Socket" placeholder="AM5, LGA1700"
+                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
         </div>
         <div class="mb-3">
-            <label class="form-label">Min Cores</label>
-            <input class="form-control" type="number" name="coresMin" value="@Model.Filter.CoresMin" />
+            <label class="form-label text-white-50">Min Cores</label>
+            <input class="form-control" type="number" name="coresMin" value="@Model.Filter.CoresMin"
+                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
         </div>
     }
     else if (pt == Demo.Models.PartType.GPU)
     {
         <div class="mb-3">
-            <label class="form-label">Min VRAM (GB)</label>
-            <input class="form-control" type="number" name="memoryGBMin" value="@Model.Filter.MemoryGBMin" />
+            <label class="form-label text-white-50">Min VRAM (GB)</label>
+            <input class="form-control" type="number" name="memoryGBMin" value="@Model.Filter.MemoryGBMin"
+                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
         </div>
         <div class="mb-3">
-            <label class="form-label">Chipset (contains)</label>
-            <input class="form-control" name="chipset" value="@Model.Filter.Chipset" placeholder="e.g. RDNA, Ada" />
+            <label class="form-label text-white-50">Chipset (contains)</label>
+            <input class="form-control" name="chipset" value="@Model.Filter.Chipset" placeholder="RTX, RX..."
+                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
         </div>
     }
     else if (pt == Demo.Models.PartType.RAM)
     {
         <div class="mb-3">
-            <label class="form-label">Min Capacity (GB)</label>
-            <input class="form-control" type="number" name="capacityGBMin" value="@Model.Filter.CapacityGBMin" />
+            <label class="form-label text-white-50">Min Capacity (GB)</label>
+            <input class="form-control" type="number" name="capacityGBMin" value="@Model.Filter.CapacityGBMin"
+                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
         </div>
         <div class="mb-3">
-            <label class="form-label">RAM Type</label>
-            <input class="form-control" name="ramType" value="@Model.Filter.RamType" placeholder="DDR4 / DDR5" />
+            <label class="form-label text-white-50">RAM Type</label>
+            <input class="form-control" name="ramType" value="@Model.Filter.RamType" placeholder="DDR4 / DDR5"
+                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
         </div>
         <div class="mb-3">
-            <label class="form-label">Min Speed (MHz)</label>
-            <input class="form-control" type="number" name="speedMHzMin" value="@Model.Filter.SpeedMHzMin" />
+            <label class="form-label text-white-50">Min Speed (MHz)</label>
+            <input class="form-control" type="number" name="speedMHzMin" value="@Model.Filter.SpeedMHzMin"
+                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
         </div>
     }
     else if (pt == Demo.Models.PartType.Motherboard)
     {
         <div class="mb-3">
-            <label class="form-label">Socket</label>
-            <input class="form-control" name="socket" value="@Model.Filter.Socket" placeholder="e.g. AM5, LGA1700" />
+            <label class="form-label text-white-50">Socket</label>
+            <input class="form-control" name="socket" value="@Model.Filter.Socket"
+                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
         </div>
         <div class="mb-3">
-            <label class="form-label">Form Factor</label>
-            <input class="form-control" name="formFactor" value="@Model.Filter.FormFactor" placeholder="ATX, Micro-ATX" />
+            <label class="form-label text-white-50">Form Factor</label>
+            <input class="form-control" name="formFactor" value="@Model.Filter.FormFactor" placeholder="ATX, Micro-ATX"
+                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
         </div>
     }
     else if (pt == Demo.Models.PartType.PowerSupply)
     {
         <div class="mb-3">
-            <label class="form-label">Min Wattage</label>
-            <input class="form-control" type="number" name="wattageMin" value="@Model.Filter.WattageMin" />
+            <label class="form-label text-white-50">Min Wattage</label>
+            <input class="form-control" type="number" name="wattageMin" value="@Model.Filter.WattageMin"
+                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
         </div>
         <div class="mb-3">
-            <label class="form-label">Efficiency</label>
-            <input class="form-control" name="efficiency" value="@Model.Filter.Efficiency" placeholder="80+ Gold" />
+            <label class="form-label text-white-50">Efficiency</label>
+            <input class="form-control" name="efficiency" value="@Model.Filter.Efficiency" placeholder="80+ Gold"
+                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
         </div>
     }
     else if (pt == Demo.Models.PartType.Storage)
     {
         <div class="mb-3">
-            <label class="form-label">Storage Type</label>
-            <input class="form-control" name="storageType" value="@Model.Filter.StorageType" placeholder="NVMe SSD / SSD / HDD" />
+            <label class="form-label text-white-50">Storage Type</label>
+            <input class="form-control" name="storageType" value="@Model.Filter.StorageType" placeholder="NVMe SSD / SSD / HDD"
+                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
         </div>
         <div class="mb-3">
-            <label class="form-label">Min Capacity (GB)</label>
-            <input class="form-control" type="number" name="capacityGBMin" value="@Model.Filter.CapacityGBMin" />
+            <label class="form-label text-white-50">Min Capacity (GB)</label>
+            <input class="form-control" type="number" name="capacityGBMin" value="@Model.Filter.CapacityGBMin"
+                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
         </div>
     }
     else if (pt == Demo.Models.PartType.Case)
     {
         <div class="mb-3">
-            <label class="form-label">Form Factor</label>
-            <input class="form-control" name="formFactor" value="@Model.Filter.FormFactor" placeholder="ATX, Mini-ITX" />
+            <label class="form-label text-white-50">Form Factor</label>
+            <input class="form-control" name="formFactor" value="@Model.Filter.FormFactor" placeholder="ATX, Mini-ITX"
+                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
         </div>
         <div class="mb-3">
-            <label class="form-label">Color</label>
-            <input class="form-control" name="color" value="@Model.Filter.Color" placeholder="Black, White" />
+            <label class="form-label text-white-50">Color</label>
+            <input class="form-control" name="color" value="@Model.Filter.Color" placeholder="Black, White"
+                   style="background:#0b1220; color:#e9ecef; border:1px solid rgba(255,255,255,.15);" />
         </div>
     }
 
     <div class="d-grid gap-2 mt-3">
-        <button type="submit" class="btn btn-primary">Apply</button>
+        <button type="submit" class="btn btn-info text-dark fw-semibold">Apply</button>
 
         <a class="btn btn-outline-secondary"
            asp-action="Index"

@@ -1,7 +1,7 @@
 ﻿using Demo.Controllers;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace Demo.ViewModels.Browse
+namespace Demo.Models.ViewModels.Browse
 {
     public class BrowseIndexVm
     {

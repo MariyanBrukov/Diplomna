@@ -1,12 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Demo.Models;
-
-namespace Demo.ViewModels.Browse
+using Microsoft.AspNetCore.Http;
+namespace Demo.Models.ViewModels.Browse
 {
     public class CreatePartVm
     {
         [Required]
         public PartType PartType { get; set; }
+
+        public IFormFile? ImageFile { get; set; }
 
         [Required, StringLength(120)]
         public string Name { get; set; } = "";
