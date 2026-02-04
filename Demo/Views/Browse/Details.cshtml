@@ -4,10 +4,10 @@
     ViewData["Title"] = $"{Model.PartType} Details";
 }
 
-<div class="container py-3">
-    <div class="mb-3">
-        <a asp-action="Index" asp-route-partType="@Model.PartType" class="btn btn-outline-secondary">
-            ← Back to @Model.PartType
+<div class="container py-3" style="color:#e9ecef;">
+    <div class="mb-3 d-flex flex-wrap gap-2">
+        <a asp-action="Index" asp-route-partType="@Model.PartType" class="btn btn-outline-info">
+            ← Back
         </a>
     </div>
 
