@@ -1,27 +1,56 @@
 ﻿@model global::Demo.Models.ViewModels.Browse.PartDetailsVm
 
+<style>
+    .specs-wrap {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 10px;
+    }
+
+    .spec-chip {
+        background: rgba(255,255,255,.03);
+        border: 1px solid rgba(255,255,255,.10);
+        border-radius: 14px;
+        padding: 10px 12px;
+        transition: transform .12s ease, border-color .12s ease;
+        min-height: 58px;
+    }
+
+        .spec-chip:hover {
+            transform: translateY(-1px);
+            border-color: rgba(97,218,251,.35);
+        }
+
+    .spec-k {
+        font-size: .76rem;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+        color: rgba(255,255,255,.55);
+        margin-bottom: 4px;
+        line-height: 1.2;
+    }
+
+    .spec-v {
+        font-size: 1rem;
+        color: rgba(233,236,239,.90);
+        line-height: 1.35;
+        word-break: break-word;
+    }
+</style>
+
 @if (Model.Specs == null || Model.Specs.Count == 0)
 {
     <div class="text-white-50">No specs available.</div>
 }
 else
 {
-    <div class="table-responsive">
-        <table class="table table-sm table-bordered align-middle mb-0"
-               style="border-color: rgba(255,255,255,.12);">
-            <tbody>
-                @foreach (var kv in Model.Specs)
-                {
-                    <tr>
-                        <th style="width:40%; color:#e9ecef; background:#0b1220; border-color:rgba(255,255,255,.12);">
-                            @kv.Key
-                        </th>
-                        <td style="color:#e9ecef; background:#111827; border-color:rgba(255,255,255,.12);">
-                            @kv.Value
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+    <div class="specs-wrap">
+        @foreach (var kv in Model.Specs)
+        {
+            <div class="spec-chip">
+                <div class="spec-k">@kv.Key</div>
+                <div class="spec-v">@kv.Value</div>
+            </div>
+        }
     </div>
 }

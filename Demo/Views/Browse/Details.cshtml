@@ -4,6 +4,56 @@
     ViewData["Title"] = $"{Model.PartType} Details";
 }
 
+<style>
+    /* Description */
+    .desc-card {
+        background: rgba(255,255,255,.03);
+        border: 1px solid rgba(255,255,255,.10);
+        border-radius: 14px;
+        padding: 14px 14px 12px 14px;
+        position: relative;
+    }
+
+        .desc-card:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            border-radius: 14px 0 0 14px;
+            background: rgba(97,218,251,.75);
+        }
+
+    .desc-title {
+        font-weight: 700;
+        letter-spacing: .2px;
+        margin-left: 8px;
+        margin-bottom: 6px;
+        color: rgba(255,255,255,.85);
+    }
+
+    .desc-text {
+        margin-left: 8px;
+        color: rgba(233,236,239,.80);
+        line-height: 1.65;
+        white-space: pre-line; /* keeps new lines from DB */
+    }
+
+    /* Small label pills under title */
+    .meta-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: .4rem;
+        padding: .35rem .6rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,.12);
+        background: rgba(255,255,255,.03);
+        color: rgba(233,236,239,.75);
+        font-size: .9rem;
+    }
+</style>
+
 <div class="container py-3" style="color:#e9ecef;">
     <div class="mb-3 d-flex flex-wrap gap-2">
         <a asp-action="Index" asp-route-partType="@Model.PartType" class="btn btn-outline-info">
@@ -39,24 +89,40 @@
                 </div>
 
                 <div class="col-12 col-lg-7">
-                    <h3 class="mb-1" style="color:#61dafb;">@Model.Name</h3>
-                    <div class="text-white-50 mb-2">@Model.Brand • @Model.PartType</div>
+                    <h3 class="mb-2" style="color:#61dafb;">@Model.Name</h3>
+
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        @if (!string.IsNullOrWhiteSpace(Model.Brand))
+                        {
+                            <span class="meta-pill">@Model.Brand</span>
+                        }
+                        <span class="meta-pill">@Model.PartType</span>
+                    </div>
 
                     <div class="fs-4 fw-bold mb-3">$@Model.Price</div>
 
-                    @if (!string.IsNullOrWhiteSpace(Model.Description))
-                    {
-                        <p class="text-white-50">@Model.Description</p>
-                    }
-                    else
-                    {
-                        <p class="text-white-50">No description yet.</p>
-                    }
+                    <!-- Nicer Description -->
+                    <div class="desc-card mt-2">
+                        <div class="desc-title">Description</div>
+                        @if (!string.IsNullOrWhiteSpace(Model.Description))
+                        {
+                            <div class="desc-text">@Model.Description</div>
+                        }
+                        else
+                        {
+                            <div class="desc-text text-white-50">No description yet.</div>
+                        }
+                    </div>
 
                     @if (Model.Specs != null && Model.Specs.Count > 0)
                     {
-                        <h5 class="mt-4" style="color:#61dafb;">Specifications</h5>
+                        <h5 class="mt-4 mb-2" style="color:#61dafb;">Specifications</h5>
                         <partial name="_SpecTable" model="Model" />
+                    }
+                    else
+                    {
+                        <h5 class="mt-4 mb-2" style="color:#61dafb;">Specifications</h5>
+                        <div class="text-white-50">No specs available.</div>
                     }
                 </div>
             </div>
