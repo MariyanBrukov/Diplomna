@@ -11,7 +11,7 @@ namespace Demo.Models
         [Display(Name = "Build Name")]
         public string BuildName { get; set; }
 
-        // Foreign keys
+       
         [Display(Name = "CPU")]
         public int CPUId { get; set; }
 
