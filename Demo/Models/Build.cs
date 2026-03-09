@@ -9,9 +9,15 @@ namespace Demo.Models
 
         [Required]
         [Display(Name = "Build Name")]
-        public string BuildName { get; set; }
+        public string BuildName { get; set; } = string.Empty;
 
-       
+        // Owner of the build
+        public int UserId { get; set; }
+
+        [ForeignKey("UserId")]
+        public User? User { get; set; }
+
+
         [Display(Name = "CPU")]
         public int CPUId { get; set; }
 
@@ -33,7 +39,9 @@ namespace Demo.Models
         [Display(Name = "Case")]
         public int CaseId { get; set; }
 
+
         // Navigation properties
+
         [ForeignKey("CPUId")]
         public virtual CPU? CPU { get; set; }
 

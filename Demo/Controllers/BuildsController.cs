@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +20,12 @@ namespace Demo.Controllers
         // GET: Builds
         public async Task<IActionResult> Index()
         {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+                return RedirectToAction("Login", "Account");
+
             var builds = _context.Builds
+                .Where(b => b.UserId == userId.Value)
                 .Include(b => b.CPU)
                 .Include(b => b.GPU)
                 .Include(b => b.Motherboard)
@@ -39,6 +43,10 @@ namespace Demo.Controllers
             if (id == null)
                 return NotFound();
 
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+                return RedirectToAction("Login", "Account");
+
             var build = await _context.Builds
                 .Include(b => b.CPU)
                 .Include(b => b.GPU)
@@ -47,7 +55,7 @@ namespace Demo.Controllers
                 .Include(b => b.Storage)
                 .Include(b => b.PowerSupply)
                 .Include(b => b.Case)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == id && m.UserId == userId.Value);
 
             if (build == null)
                 return NotFound();
@@ -58,6 +66,10 @@ namespace Demo.Controllers
         // GET: Builds/Create
         public IActionResult Create()
         {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+                return RedirectToAction("Login", "Account");
+
             PopulateDropdowns();
             return View();
         }
@@ -67,11 +79,18 @@ namespace Demo.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,BuildName,CPUId,GPUId,MotherboardId,RAMId,StorageId,PowerSupplyId,CaseId")] Build build)
         {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+                return RedirectToAction("Login", "Account");
+
             if (ModelState.IsValid)
             {
+                build.UserId = userId.Value;
                 build.TotalPrice = await CalculateTotalPrice(build);
+
                 _context.Add(build);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -85,7 +104,13 @@ namespace Demo.Controllers
             if (id == null)
                 return NotFound();
 
-            var build = await _context.Builds.FindAsync(id);
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+                return RedirectToAction("Login", "Account");
+
+            var build = await _context.Builds
+                .FirstOrDefaultAsync(b => b.Id == id && b.UserId == userId.Value);
+
             if (build == null)
                 return NotFound();
 
@@ -101,11 +126,24 @@ namespace Demo.Controllers
             if (id != build.Id)
                 return NotFound();
 
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+                return RedirectToAction("Login", "Account");
+
+            var existingBuild = await _context.Builds
+                .AsNoTracking()
+                .FirstOrDefaultAsync(b => b.Id == id && b.UserId == userId.Value);
+
+            if (existingBuild == null)
+                return NotFound();
+
             if (ModelState.IsValid)
             {
                 try
                 {
+                    build.UserId = userId.Value;
                     build.TotalPrice = await CalculateTotalPrice(build);
+
                     _context.Update(build);
                     await _context.SaveChangesAsync();
                 }
@@ -116,6 +154,7 @@ namespace Demo.Controllers
                     else
                         throw;
                 }
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -129,6 +168,10 @@ namespace Demo.Controllers
             if (id == null)
                 return NotFound();
 
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+                return RedirectToAction("Login", "Account");
+
             var build = await _context.Builds
                 .Include(b => b.CPU)
                 .Include(b => b.GPU)
@@ -137,7 +180,7 @@ namespace Demo.Controllers
                 .Include(b => b.Storage)
                 .Include(b => b.PowerSupply)
                 .Include(b => b.Case)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == id && m.UserId == userId.Value);
 
             if (build == null)
                 return NotFound();
@@ -150,7 +193,13 @@ namespace Demo.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var build = await _context.Builds.FindAsync(id);
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+                return RedirectToAction("Login", "Account");
+
+            var build = await _context.Builds
+                .FirstOrDefaultAsync(b => b.Id == id && b.UserId == userId.Value);
+
             if (build != null)
             {
                 _context.Builds.Remove(build);
@@ -160,7 +209,6 @@ namespace Demo.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Utility: Populate dropdowns for Create/Edit
         private void PopulateDropdowns(Build? build = null)
         {
             ViewData["CPUId"] = new SelectList(_context.CPUs, "Id", "Name", build?.CPUId);
@@ -172,7 +220,6 @@ namespace Demo.Controllers
             ViewData["CaseId"] = new SelectList(_context.Cases, "Id", "Name", build?.CaseId);
         }
 
-        // Utility: Calculate total based on selected parts
         private async Task<decimal> CalculateTotalPrice(Build build)
         {
             decimal total = 0;

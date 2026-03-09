@@ -1,9 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Demo.Models; // Make sure this namespace contains User, Build, Contact, etc.
 
 namespace Demo.Models
 {
-    // ✅ Added enum here so the project compiles immediately
     public enum PartType
     {
         CPU = 1,
@@ -22,7 +20,6 @@ namespace Demo.Models
         {
         }
 
-        // ✅ DbSets
         public DbSet<User> Users { get; set; }
         public DbSet<CPU> CPUs { get; set; }
         public DbSet<GPU> GPUs { get; set; }
@@ -38,7 +35,11 @@ namespace Demo.Models
         {
             base.OnModelCreating(modelBuilder);
 
-            // ✅ SEED DATA — automatically populates your database
+            modelBuilder.Entity<Build>()
+                .HasOne(b => b.User)
+                .WithMany(u => u.Builds)
+                .HasForeignKey(b => b.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // CPUs
             modelBuilder.Entity<CPU>().HasData(
