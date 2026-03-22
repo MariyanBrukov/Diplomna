@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Demo.Models
 {
@@ -8,17 +9,29 @@ namespace Demo.Models
 
         [Required]
         [StringLength(100)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Required]
         [EmailAddress]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [StringLength(100)]
-        public string Subject { get; set; }
+        public string Subject { get; set; } = string.Empty;
 
         [Required]
         [StringLength(500)]
-        public string Message { get; set; }
+        public string Message { get; set; } = string.Empty;
+
+        // ✅ NEW: Admin reply
+        public string? AdminReply { get; set; }
+
+        // ✅ NEW: When admin replied
+        public DateTime? ReplyDate { get; set; }
+
+        // ✅ NEW: Status
+        public bool IsAnswered { get; set; } = false;
+
+        // ✅ Optional: When created
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

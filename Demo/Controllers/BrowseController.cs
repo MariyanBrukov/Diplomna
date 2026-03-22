@@ -24,7 +24,6 @@ namespace Demo.Controllers
             _env = env;
         }
 
-        // /Browse?partType=CPU&minPrice=100&maxPrice=500&brand=Intel&coresMin=6&search=ryzen&sort=price_desc
         [HttpGet]
         public async Task<IActionResult> Index([FromQuery] BrowseFilterVm filter)
         {
@@ -35,6 +34,8 @@ namespace Demo.Controllers
             q = ApplySorting(q, filter.Sort);
 
             var brands = await GetBrandsForPartTypeAsync(filter.PartType.Value);
+
+            ViewBag.IsAdmin = IsAdmin();
 
             var vm = new BrowseIndexVm
             {
@@ -49,6 +50,8 @@ namespace Demo.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(PartType partType, int id)
         {
+            ViewBag.IsAdmin = IsAdmin();
+
             var details = await LoadDetailsAsync(partType, id);
             if (details == null) return NotFound();
             return View(details);
@@ -60,6 +63,9 @@ namespace Demo.Controllers
         [HttpGet]
         public IActionResult Create(PartType partType)
         {
+            if (!IsAdmin())
+                return RedirectToAction("Login", "Account");
+
             return View(new CreatePartVm { PartType = partType });
         }
 
@@ -70,12 +76,12 @@ namespace Demo.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreatePartVm vm)
         {
+            if (!IsAdmin())
+                return RedirectToAction("Login", "Account");
+
             if (!ModelState.IsValid)
                 return View(vm);
 
-            // If you upgraded CreatePartVm to include ImageFile:
-            // - if ImageFile is provided, save and use it
-            // - else keep vm.ImageUrl (if you still allow URL)
             if (vm.ImageFile != null && vm.ImageFile.Length > 0)
             {
                 try
@@ -97,7 +103,7 @@ namespace Demo.Controllers
                         Name = vm.Name,
                         Brand = vm.Brand,
                         Price = vm.Price,
-                        Description = vm.Description,          // ✅ important
+                        Description = vm.Description,
                         ImageUrl = vm.ImageUrl,
                         Socket = vm.Socket ?? "",
                         Cores = vm.Cores ?? 0,
@@ -111,7 +117,7 @@ namespace Demo.Controllers
                         Name = vm.Name,
                         Brand = vm.Brand,
                         Price = vm.Price,
-                        Description = vm.Description,          // ✅ important
+                        Description = vm.Description,
                         ImageUrl = vm.ImageUrl,
                         MemoryGB = vm.MemoryGB ?? 0,
                         Chipset = vm.Chipset ?? ""
@@ -124,7 +130,7 @@ namespace Demo.Controllers
                         Name = vm.Name,
                         Brand = vm.Brand,
                         Price = vm.Price,
-                        Description = vm.Description,          // ✅ important
+                        Description = vm.Description,
                         ImageUrl = vm.ImageUrl,
                         CapacityGB = vm.CapacityGB ?? 0,
                         Type = vm.RamType ?? "",
@@ -138,7 +144,7 @@ namespace Demo.Controllers
                         Name = vm.Name,
                         Brand = vm.Brand,
                         Price = vm.Price,
-                        Description = vm.Description,          // ✅ important
+                        Description = vm.Description,
                         ImageUrl = vm.ImageUrl,
                         Socket = vm.Socket ?? "",
                         FormFactor = vm.FormFactor ?? ""
@@ -151,7 +157,7 @@ namespace Demo.Controllers
                         Name = vm.Name,
                         Brand = vm.Brand,
                         Price = vm.Price,
-                        Description = vm.Description,          // ✅ important
+                        Description = vm.Description,
                         ImageUrl = vm.ImageUrl,
                         Wattage = vm.Wattage ?? 0,
                         Efficiency = vm.Efficiency ?? ""
@@ -164,7 +170,7 @@ namespace Demo.Controllers
                         Name = vm.Name,
                         Brand = vm.Brand,
                         Price = vm.Price,
-                        Description = vm.Description,          // ✅ important
+                        Description = vm.Description,
                         ImageUrl = vm.ImageUrl,
                         Type = vm.StorageType ?? "",
                         CapacityGB = vm.CapacityGB ?? 0
@@ -177,7 +183,7 @@ namespace Demo.Controllers
                         Name = vm.Name,
                         Brand = vm.Brand,
                         Price = vm.Price,
-                        Description = vm.Description,          // ✅ important
+                        Description = vm.Description,
                         ImageUrl = vm.ImageUrl,
                         FormFactor = vm.FormFactor ?? "",
                         Color = vm.Color ?? ""
@@ -198,6 +204,9 @@ namespace Demo.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(PartType partType, int id)
         {
+            if (!IsAdmin())
+                return RedirectToAction("Login", "Account");
+
             var vm = await LoadEditVmAsync(partType, id);
             if (vm == null) return NotFound();
             return View(vm);
@@ -210,6 +219,9 @@ namespace Demo.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditPartVm vm)
         {
+            if (!IsAdmin())
+                return RedirectToAction("Login", "Account");
+
             if (!ModelState.IsValid)
                 return View(vm);
 
@@ -239,7 +251,7 @@ namespace Demo.Controllers
                         x.Name = vm.Name;
                         x.Brand = vm.Brand;
                         x.Price = vm.Price;
-                        x.Description = vm.Description;          // ✅ important
+                        x.Description = vm.Description;
                         x.ImageUrl = imageUrl;
                         x.Socket = vm.Socket ?? "";
                         x.Cores = vm.Cores ?? 0;
@@ -255,7 +267,7 @@ namespace Demo.Controllers
                         x.Name = vm.Name;
                         x.Brand = vm.Brand;
                         x.Price = vm.Price;
-                        x.Description = vm.Description;          // ✅ important
+                        x.Description = vm.Description;
                         x.ImageUrl = imageUrl;
                         x.MemoryGB = vm.MemoryGB ?? 0;
                         x.Chipset = vm.Chipset ?? "";
@@ -270,7 +282,7 @@ namespace Demo.Controllers
                         x.Name = vm.Name;
                         x.Brand = vm.Brand;
                         x.Price = vm.Price;
-                        x.Description = vm.Description;          // ✅ important
+                        x.Description = vm.Description;
                         x.ImageUrl = imageUrl;
                         x.CapacityGB = vm.CapacityGB ?? 0;
                         x.Type = vm.RamType ?? "";
@@ -286,7 +298,7 @@ namespace Demo.Controllers
                         x.Name = vm.Name;
                         x.Brand = vm.Brand;
                         x.Price = vm.Price;
-                        x.Description = vm.Description;          // ✅ important
+                        x.Description = vm.Description;
                         x.ImageUrl = imageUrl;
                         x.Socket = vm.Socket ?? "";
                         x.FormFactor = vm.FormFactor ?? "";
@@ -301,7 +313,7 @@ namespace Demo.Controllers
                         x.Name = vm.Name;
                         x.Brand = vm.Brand;
                         x.Price = vm.Price;
-                        x.Description = vm.Description;          // ✅ important
+                        x.Description = vm.Description;
                         x.ImageUrl = imageUrl;
                         x.Wattage = vm.Wattage ?? 0;
                         x.Efficiency = vm.Efficiency ?? "";
@@ -316,7 +328,7 @@ namespace Demo.Controllers
                         x.Name = vm.Name;
                         x.Brand = vm.Brand;
                         x.Price = vm.Price;
-                        x.Description = vm.Description;          // ✅ important
+                        x.Description = vm.Description;
                         x.ImageUrl = imageUrl;
                         x.Type = vm.StorageType ?? "";
                         x.CapacityGB = vm.CapacityGB ?? 0;
@@ -331,7 +343,7 @@ namespace Demo.Controllers
                         x.Name = vm.Name;
                         x.Brand = vm.Brand;
                         x.Price = vm.Price;
-                        x.Description = vm.Description;          // ✅ important
+                        x.Description = vm.Description;
                         x.ImageUrl = imageUrl;
                         x.FormFactor = vm.FormFactor ?? "";
                         x.Color = vm.Color ?? "";
@@ -346,9 +358,10 @@ namespace Demo.Controllers
             return RedirectToAction(nameof(Details), new { partType = vm.PartType, id = vm.Id });
         }
 
-        // ============================================================
-        // Helpers
-        // ============================================================
+        private bool IsAdmin()
+        {
+            return HttpContext.Session.GetString("IsAdmin") == "True";
+        }
 
         private static IQueryable<BrowseItemVm> ApplySorting(IQueryable<BrowseItemVm> q, string? sort)
         {
@@ -566,7 +579,6 @@ namespace Demo.Controllers
                 .ToListAsync();
         }
 
-        // ✅ IMPORTANT: now returns specs too, so Details page can show them
         private async Task<PartDetailsVm?> LoadDetailsAsync(PartType partType, int id)
         {
             switch (partType)
@@ -748,7 +760,7 @@ namespace Demo.Controllers
                             Name = x.Name,
                             Brand = x.Brand,
                             Price = x.Price,
-                            Description = x.Description,              // ✅ important
+                            Description = x.Description,
                             ExistingImageUrl = x.ImageUrl,
                             Socket = x.Socket,
                             Cores = x.Cores,
@@ -768,7 +780,7 @@ namespace Demo.Controllers
                             Name = x.Name,
                             Brand = x.Brand,
                             Price = x.Price,
-                            Description = x.Description,              // ✅ important
+                            Description = x.Description,
                             ExistingImageUrl = x.ImageUrl,
                             MemoryGB = x.MemoryGB,
                             Chipset = x.Chipset
@@ -787,7 +799,7 @@ namespace Demo.Controllers
                             Name = x.Name,
                             Brand = x.Brand,
                             Price = x.Price,
-                            Description = x.Description,              // ✅ important
+                            Description = x.Description,
                             ExistingImageUrl = x.ImageUrl,
                             CapacityGB = x.CapacityGB,
                             RamType = x.Type,
@@ -807,7 +819,7 @@ namespace Demo.Controllers
                             Name = x.Name,
                             Brand = x.Brand,
                             Price = x.Price,
-                            Description = x.Description,              // ✅ important
+                            Description = x.Description,
                             ExistingImageUrl = x.ImageUrl,
                             Socket = x.Socket,
                             FormFactor = x.FormFactor
@@ -826,7 +838,7 @@ namespace Demo.Controllers
                             Name = x.Name,
                             Brand = x.Brand,
                             Price = x.Price,
-                            Description = x.Description,              // ✅ important
+                            Description = x.Description,
                             ExistingImageUrl = x.ImageUrl,
                             Wattage = x.Wattage,
                             Efficiency = x.Efficiency
@@ -845,7 +857,7 @@ namespace Demo.Controllers
                             Name = x.Name,
                             Brand = x.Brand,
                             Price = x.Price,
-                            Description = x.Description,              // ✅ important
+                            Description = x.Description,
                             ExistingImageUrl = x.ImageUrl,
                             StorageType = x.Type,
                             CapacityGB = x.CapacityGB
@@ -864,7 +876,7 @@ namespace Demo.Controllers
                             Name = x.Name,
                             Brand = x.Brand,
                             Price = x.Price,
-                            Description = x.Description,              // ✅ important
+                            Description = x.Description,
                             ExistingImageUrl = x.ImageUrl,
                             FormFactor = x.FormFactor,
                             Color = x.Color

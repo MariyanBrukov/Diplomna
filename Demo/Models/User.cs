@@ -23,7 +23,9 @@ namespace Demo.Models
 
         public DateTime DateCreated { get; set; } = DateTime.Now;
 
-        // One user can have many builds
+        // ✅ NEW: Admin flag
+        public bool IsAdmin { get; set; } = false;
+
         public List<Build> Builds { get; set; } = new();
     }
 }

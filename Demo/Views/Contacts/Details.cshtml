@@ -1,34 +1,124 @@
 ﻿@model Demo.Models.Contact
 @{
-    ViewData["Title"] = "Contact Details";
+    ViewData["Title"] = "Ticket Details";
 }
 
-<div class="d-flex justify-content-center align-items-center fade-in" style="min-height:80vh;">
-    <div class="card card-glow p-5 text-center" style="max-width:550px; width:100%;">
-        <h2 class="text-info fw-bold mb-4">
-            <i class="fa-solid fa-address-card me-2"></i> Contact Details
-        </h2>
+<div class="container py-5 fade-in">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
 
-        <div class="text-start bg-dark border border-secondary rounded-3 p-4 mb-4">
-            <p class="mb-2"><strong class="text-info">Name:</strong> <span class="text-light">@Model.Name</span></p>
-            <p class="mb-2"><strong class="text-info">Email:</strong> <span class="text-light">@Model.Email</span></p>
-            <p class="mb-2"><strong class="text-info">Subject:</strong> <span class="text-light">@Model.Subject</span></p>
-            <p class="mb-0"><strong class="text-info">Message:</strong> <span class="text-light">@Model.Message</span></p>
-        </div>
+            <div class="card card-glow p-4 p-md-5">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+                    <div>
+                        <h2 class="text-info fw-bold mb-1">
+                            <i class="fa-solid fa-ticket me-2"></i> Ticket Details
+                        </h2>
+                        <div class="text-white-50 small">
+                            Created: @Model.CreatedAt.ToString("f")
+                        </div>
+                    </div>
 
-        <div class="d-flex justify-content-center gap-3">
-            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-fancy px-4 rounded-pill">
-                <i class="fa-solid fa-pen"></i> Edit
-            </a>
-            <a asp-action="Index" class="btn btn-outline-light px-4 rounded-pill">
-                <i class="fa-solid fa-arrow-left"></i> Back
-            </a>
+                    <div>
+                        @if (Model.IsAnswered)
+                        {
+                            <span class="badge bg-success fs-6">Answered</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark fs-6">Pending</span>
+                        }
+                    </div>
+                </div>
+
+                @if (TempData["ReplySuccess"] != null)
+                {
+                    <div class="alert alert-success">
+                        @TempData["ReplySuccess"]
+                    </div>
+                }
+
+                @if (TempData["ReplyError"] != null)
+                {
+                    <div class="alert alert-danger">
+                        @TempData["ReplyError"]
+                    </div>
+                }
+
+                <div class="bg-dark border border-secondary rounded-3 p-4 mb-4">
+                    <p class="mb-2">
+                        <strong class="text-info">Name:</strong>
+                        <span class="text-light">@Model.Name</span>
+                    </p>
+
+                    <p class="mb-2">
+                        <strong class="text-info">Email:</strong>
+                        <span class="text-light">@Model.Email</span>
+                    </p>
+
+                    <p class="mb-2">
+                        <strong class="text-info">Subject:</strong>
+                        <span class="text-light">@Model.Subject</span>
+                    </p>
+
+                    <div class="mb-0">
+                        <strong class="text-info">Message:</strong>
+                        <div class="text-light mt-2" style="white-space:pre-wrap;">@Model.Message</div>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(Model.AdminReply))
+                {
+                    <div class="bg-black border border-success rounded-3 p-4 mb-4">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                            <h5 class="text-success mb-0">
+                                <i class="fa-solid fa-reply me-2"></i> Admin Reply
+                            </h5>
+                            @if (Model.ReplyDate.HasValue)
+                            {
+                                <span class="text-white-50 small">@Model.ReplyDate.Value.ToString("f")</span>
+                            }
+                        </div>
+
+                        <div class="text-light" style="white-space:pre-wrap;">@Model.AdminReply</div>
+                    </div>
+                }
+
+                <div class="bg-dark border border-info rounded-3 p-4 mb-4">
+                    <h5 class="text-info mb-3">
+                        <i class="fa-solid fa-pen-to-square me-2"></i>
+                        @(string.IsNullOrWhiteSpace(Model.AdminReply) ? "Write Reply" : "Update Reply")
+                    </h5>
+
+                    <form asp-action="Reply" method="post">
+                        <input type="hidden" name="id" value="@Model.Id" />
+
+                        <div class="mb-3">
+                            <textarea name="adminReply"
+                                      class="form-control bg-black text-light border-secondary"
+                                      rows="6"
+                                      placeholder="Write your reply to this ticket...">@Model.AdminReply</textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 flex-wrap">
+                            <a asp-action="Index" class="btn btn-outline-light px-4 rounded-pill">
+                                <i class="fa-solid fa-arrow-left"></i> Back
+                            </a>
+
+                            <button type="submit" class="btn btn-fancy px-4 rounded-pill">
+                                <i class="fa-solid fa-paper-plane"></i>
+                                @(string.IsNullOrWhiteSpace(Model.AdminReply) ? "Send Reply" : "Update Reply")
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger rounded-pill px-4">
+                        <i class="fa-solid fa-trash"></i> Delete Ticket
+                    </a>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
-
-@section Scripts {
-    <script>
-        document.querySelector('.card-glow').classList.add('fade-in');
-    </script>
-}

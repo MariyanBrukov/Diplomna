@@ -1,15 +1,29 @@
 ﻿@model Demo.Models.Contact
 @{
-    ViewData["Title"] = "Create Contact";
+    ViewData["Title"] = "Contact Support";
 }
 
 <div class="d-flex justify-content-center align-items-center fade-in" style="min-height:80vh;">
     <div class="card card-glow p-5" style="max-width:600px; width:100%;">
-        <h2 class="text-center mb-4 text-info fw-bold">
-            <i class="fa-solid fa-envelope me-2"></i> Create Contact
+
+        <h2 class="text-center mb-3 text-info fw-bold">
+            <i class="fa-solid fa-headset me-2"></i> Contact Support
         </h2>
 
+        <p class="text-center text-white-50 mb-4">
+            Have a problem or question? Send us a message and our admin will reply.
+        </p>
+
+        <!-- ✅ SUCCESS MESSAGE -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success text-center">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
         <form asp-action="Create" method="post">
+
             <div class="mb-3">
                 <label asp-for="Name" class="form-label fw-semibold text-light"></label>
                 <div class="input-group">
@@ -38,23 +52,28 @@
                     <span class="input-group-text bg-dark text-info border-secondary">
                         <i class="fa-solid fa-tag"></i>
                     </span>
-                    <input asp-for="Subject" class="form-control bg-dark text-light border-secondary" placeholder="Subject..." />
+                    <input asp-for="Subject" class="form-control bg-dark text-light border-secondary" placeholder="What is this about?" />
                 </div>
                 <span asp-validation-for="Subject" class="text-danger small"></span>
             </div>
 
             <div class="mb-3">
                 <label asp-for="Message" class="form-label fw-semibold text-light"></label>
-                <textarea asp-for="Message" rows="4" class="form-control bg-dark text-light border-secondary" placeholder="Type your message..."></textarea>
+                <textarea asp-for="Message"
+                          rows="5"
+                          class="form-control bg-dark text-light border-secondary"
+                          placeholder="Describe your issue or question..."></textarea>
                 <span asp-validation-for="Message" class="text-danger small"></span>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center mt-4">
-                <a asp-action="Index" class="btn btn-outline-light px-4 rounded-pill">
-                    <i class="fa-solid fa-arrow-left"></i> Back
+            <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-2">
+                <a asp-controller="Home" asp-action="Index"
+                   class="btn btn-outline-light px-4 rounded-pill">
+                    <i class="fa-solid fa-arrow-left"></i> Home
                 </a>
+
                 <button type="submit" class="btn btn-fancy px-4 rounded-pill">
-                    <i class="fa-solid fa-paper-plane"></i> Submit
+                    <i class="fa-solid fa-paper-plane"></i> Send Message
                 </button>
             </div>
         </form>
@@ -63,7 +82,4 @@
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
-    <script>
-        document.querySelector('.card-glow').classList.add('fade-in');
-    </script>
 }

@@ -4,6 +4,7 @@ using Demo.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Demo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260322120958_AddAdminToUser")]
+    partial class AddAdminToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -138,7 +141,7 @@ namespace Demo.Migrations
                             Brand = "",
                             ClockSpeedGHz = 2.5f,
                             Cores = 6,
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(618),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1518),
                             IsActive = true,
                             Name = "Intel Core i5-12400F",
                             Price = 160m,
@@ -150,7 +153,7 @@ namespace Demo.Migrations
                             Brand = "",
                             ClockSpeedGHz = 3.4f,
                             Cores = 16,
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(622),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1524),
                             IsActive = true,
                             Name = "Intel Core i7-13700K",
                             Price = 420m,
@@ -162,7 +165,7 @@ namespace Demo.Migrations
                             Brand = "",
                             ClockSpeedGHz = 3.5f,
                             Cores = 6,
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(624),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1525),
                             IsActive = true,
                             Name = "AMD Ryzen 5 5600",
                             Price = 140m,
@@ -174,7 +177,7 @@ namespace Demo.Migrations
                             Brand = "",
                             ClockSpeedGHz = 4.2f,
                             Cores = 8,
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(625),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1527),
                             IsActive = true,
                             Name = "AMD Ryzen 7 7800X3D",
                             Price = 400m,
@@ -186,7 +189,7 @@ namespace Demo.Migrations
                             Brand = "",
                             ClockSpeedGHz = 3.2f,
                             Cores = 24,
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(626),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1528),
                             IsActive = true,
                             Name = "Intel Core i9-14900K",
                             Price = 600m,
@@ -247,7 +250,7 @@ namespace Demo.Migrations
                             Id = 1,
                             Brand = "",
                             Color = "White",
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(839),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1799),
                             FormFactor = "ATX",
                             IsActive = true,
                             Name = "NZXT H510",
@@ -258,7 +261,7 @@ namespace Demo.Migrations
                             Id = 2,
                             Brand = "",
                             Color = "Black",
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(841),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1801),
                             FormFactor = "ATX",
                             IsActive = true,
                             Name = "Lian Li Lancool II Mesh",
@@ -269,7 +272,7 @@ namespace Demo.Migrations
                             Id = 3,
                             Brand = "",
                             Color = "Black",
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(842),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1803),
                             FormFactor = "Mini-ITX",
                             IsActive = true,
                             Name = "Cooler Master NR200",
@@ -280,7 +283,7 @@ namespace Demo.Migrations
                             Id = 4,
                             Brand = "",
                             Color = "Black",
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(843),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1808),
                             FormFactor = "ATX",
                             IsActive = true,
                             Name = "Fractal Design Meshify 2",
@@ -291,7 +294,7 @@ namespace Demo.Migrations
                             Id = 5,
                             Brand = "",
                             Color = "White",
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(843),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1809),
                             FormFactor = "ATX",
                             IsActive = true,
                             Name = "Corsair 4000D Airflow",
@@ -307,18 +310,9 @@ namespace Demo.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AdminReply")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsAnswered")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Message")
                         .IsRequired()
@@ -329,9 +323,6 @@ namespace Demo.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("ReplyDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Subject")
                         .IsRequired()
@@ -395,7 +386,7 @@ namespace Demo.Migrations
                             Id = 1,
                             Brand = "",
                             Chipset = "Ada Lovelace",
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(716),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1641),
                             IsActive = true,
                             MemoryGB = 8,
                             Name = "NVIDIA RTX 4060",
@@ -406,7 +397,7 @@ namespace Demo.Migrations
                             Id = 2,
                             Brand = "",
                             Chipset = "Ada Lovelace",
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(720),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1643),
                             IsActive = true,
                             MemoryGB = 12,
                             Name = "NVIDIA RTX 4070",
@@ -417,7 +408,7 @@ namespace Demo.Migrations
                             Id = 3,
                             Brand = "",
                             Chipset = "RDNA 3",
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(721),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1644),
                             IsActive = true,
                             MemoryGB = 8,
                             Name = "AMD Radeon RX 7600",
@@ -428,7 +419,7 @@ namespace Demo.Migrations
                             Id = 4,
                             Brand = "",
                             Chipset = "RDNA 3",
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(722),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1645),
                             IsActive = true,
                             MemoryGB = 20,
                             Name = "AMD Radeon RX 7900 XT",
@@ -439,7 +430,7 @@ namespace Demo.Migrations
                             Id = 5,
                             Brand = "",
                             Chipset = "Ada Lovelace",
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(723),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1677),
                             IsActive = true,
                             MemoryGB = 24,
                             Name = "NVIDIA RTX 4090",
@@ -499,7 +490,7 @@ namespace Demo.Migrations
                         {
                             Id = 1,
                             Brand = "",
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(745),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1704),
                             FormFactor = "Micro-ATX",
                             IsActive = true,
                             Name = "ASUS TUF Gaming B660M-PLUS",
@@ -510,7 +501,7 @@ namespace Demo.Migrations
                         {
                             Id = 2,
                             Brand = "",
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(747),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1706),
                             FormFactor = "ATX",
                             IsActive = true,
                             Name = "MSI MAG B550 TOMAHAWK",
@@ -521,7 +512,7 @@ namespace Demo.Migrations
                         {
                             Id = 3,
                             Brand = "",
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(748),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1707),
                             FormFactor = "ATX",
                             IsActive = true,
                             Name = "Gigabyte X670 AORUS ELITE",
@@ -532,7 +523,7 @@ namespace Demo.Migrations
                         {
                             Id = 4,
                             Brand = "",
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(749),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1708),
                             FormFactor = "ATX",
                             IsActive = true,
                             Name = "ASRock Z790 Steel Legend",
@@ -543,7 +534,7 @@ namespace Demo.Migrations
                         {
                             Id = 5,
                             Brand = "",
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(750),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1710),
                             FormFactor = "ATX",
                             IsActive = true,
                             Name = "MSI PRO B650-P",
@@ -603,7 +594,7 @@ namespace Demo.Migrations
                         {
                             Id = 1,
                             Brand = "",
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(815),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1776),
                             Efficiency = "80+ Gold",
                             IsActive = true,
                             Name = "Corsair RM750e",
@@ -614,7 +605,7 @@ namespace Demo.Migrations
                         {
                             Id = 2,
                             Brand = "",
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(816),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1778),
                             Efficiency = "80+ Bronze",
                             IsActive = true,
                             Name = "EVGA 600 BR",
@@ -625,7 +616,7 @@ namespace Demo.Migrations
                         {
                             Id = 3,
                             Brand = "",
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(818),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1780),
                             Efficiency = "80+ Gold",
                             IsActive = true,
                             Name = "Seasonic Focus GX-850",
@@ -636,7 +627,7 @@ namespace Demo.Migrations
                         {
                             Id = 4,
                             Brand = "",
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(818),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1781),
                             Efficiency = "80+ Bronze",
                             IsActive = true,
                             Name = "Cooler Master MWE 650",
@@ -647,7 +638,7 @@ namespace Demo.Migrations
                         {
                             Id = 5,
                             Brand = "",
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(819),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1782),
                             Efficiency = "80+ Platinum",
                             IsActive = true,
                             Name = "ASUS ROG Loki 1000W",
@@ -711,7 +702,7 @@ namespace Demo.Migrations
                             Id = 1,
                             Brand = "",
                             CapacityGB = 16,
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(770),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1729),
                             IsActive = true,
                             Name = "Corsair Vengeance LPX 16GB",
                             Price = 50m,
@@ -723,7 +714,7 @@ namespace Demo.Migrations
                             Id = 2,
                             Brand = "",
                             CapacityGB = 32,
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(774),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1731),
                             IsActive = true,
                             Name = "G.Skill Trident Z5 32GB",
                             Price = 160m,
@@ -735,7 +726,7 @@ namespace Demo.Migrations
                             Id = 3,
                             Brand = "",
                             CapacityGB = 16,
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(775),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1732),
                             IsActive = true,
                             Name = "Kingston Fury Beast 16GB",
                             Price = 55m,
@@ -747,7 +738,7 @@ namespace Demo.Migrations
                             Id = 4,
                             Brand = "",
                             CapacityGB = 32,
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(776),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1733),
                             IsActive = true,
                             Name = "Crucial DDR5 32GB",
                             Price = 140m,
@@ -759,7 +750,7 @@ namespace Demo.Migrations
                             Id = 5,
                             Brand = "",
                             CapacityGB = 16,
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(778),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1734),
                             IsActive = true,
                             Name = "TeamGroup T-Force Delta RGB 16GB",
                             Price = 60m,
@@ -820,7 +811,7 @@ namespace Demo.Migrations
                             Id = 1,
                             Brand = "",
                             CapacityGB = 1000,
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(794),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1753),
                             IsActive = true,
                             Name = "Samsung 970 EVO Plus",
                             Price = 90m,
@@ -831,7 +822,7 @@ namespace Demo.Migrations
                             Id = 2,
                             Brand = "",
                             CapacityGB = 1000,
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(795),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1754),
                             IsActive = true,
                             Name = "Crucial MX500",
                             Price = 70m,
@@ -842,7 +833,7 @@ namespace Demo.Migrations
                             Id = 3,
                             Brand = "",
                             CapacityGB = 500,
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(796),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1756),
                             IsActive = true,
                             Name = "WD Blue SN570",
                             Price = 40m,
@@ -853,7 +844,7 @@ namespace Demo.Migrations
                             Id = 4,
                             Brand = "",
                             CapacityGB = 2000,
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(797),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1757),
                             IsActive = true,
                             Name = "Seagate Barracuda",
                             Price = 60m,
@@ -864,7 +855,7 @@ namespace Demo.Migrations
                             Id = 5,
                             Brand = "",
                             CapacityGB = 2000,
-                            CreatedUtc = new DateTime(2026, 3, 22, 12, 33, 23, 288, DateTimeKind.Utc).AddTicks(799),
+                            CreatedUtc = new DateTime(2026, 3, 22, 12, 9, 57, 391, DateTimeKind.Utc).AddTicks(1758),
                             IsActive = true,
                             Name = "Kingston KC3000",
                             Price = 160m,
@@ -902,17 +893,6 @@ namespace Demo.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 999,
-                            DateCreated = new DateTime(2026, 3, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "admin@pcjunkie.com",
-                            IsAdmin = true,
-                            Password = "admin123",
-                            Username = "admin"
-                        });
                 });
 
             modelBuilder.Entity("Demo.Models.Build", b =>

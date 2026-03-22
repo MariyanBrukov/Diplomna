@@ -1,19 +1,19 @@
 ﻿@model IEnumerable<Demo.Models.Contact>
+
 @{
-    ViewData["Title"] = "Contacts";
+    ViewData["Title"] = "Support Tickets";
 }
 
 <div class="container py-5 fade-in">
     <h1 class="text-center mb-4 text-info fw-bold">
-        <i class="fa-solid fa-address-book me-2"></i> Contacts
+        <i class="fa-solid fa-headset me-2"></i> Support Tickets
     </h1>
 
     @if (!Model.Any())
     {
         <div class="text-center text-light mt-5">
             <i class="fa-solid fa-inbox fa-3x mb-3 text-info"></i>
-            <h4>No contacts found</h4>
-            <p class="text-white-50">Click the + button below to add a new contact.</p>
+            <h4>No tickets yet</h4>
         </div>
     }
     else
@@ -24,38 +24,46 @@
                 <div class="col-md-6 col-lg-4">
                     <div class="card card-glow h-100 p-4 position-relative">
 
+                        <!-- STATUS BADGE -->
+                        <div class="position-absolute top-0 end-0 m-3">
+                            @if (item.IsAnswered)
+                            {
+                                <span class="badge bg-success">Answered</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            }
+                        </div>
+
                         <h5 class="text-info fw-semibold mb-2">
                             <i class="fa-solid fa-user me-1"></i> @item.Name
                         </h5>
 
-                        <div class="text-light small mb-3">
-                            <p class="mb-1">
-                                <strong>Email:</strong>
-                                <span class="text-white-50">@item.Email</span>
-                            </p>
+                        <div class="text-light small mb-2">
+                            <strong>Email:</strong>
+                            <span class="text-white-50">@item.Email</span>
+                        </div>
 
-                            <p class="mb-1">
-                                <strong>Subject:</strong>
-                                <span class="text-white-50">@item.Subject</span>
-                            </p>
+                        <div class="text-light small mb-2">
+                            <strong>Subject:</strong>
+                            <span class="text-white-50">@item.Subject</span>
+                        </div>
 
-                            <p class="mb-1">
-                                <strong>Message:</strong>
-                                <span class="text-white-50">@item.Message</span>
-                            </p>
+                        <div class="text-white-50 small mb-3" style="max-height:80px; overflow:hidden;">
+                            @item.Message
+                        </div>
+
+                        <div class="text-white-50 small mb-3">
+                            <i class="fa-regular fa-clock me-1"></i>
+                            @item.CreatedAt.ToString("g")
                         </div>
 
                         <div class="d-flex justify-content-end gap-2 mt-auto">
                             <a asp-action="Details" asp-route-id="@item.Id"
                                class="btn btn-sm btn-outline-info"
-                               title="Details">
-                                <i class="fa-solid fa-eye"></i>
-                            </a>
-
-                            <a asp-action="Edit" asp-route-id="@item.Id"
-                               class="btn btn-sm btn-outline-warning"
-                               title="Edit">
-                                <i class="fa-solid fa-pen"></i>
+                               title="View / Reply">
+                                <i class="fa-solid fa-reply"></i>
                             </a>
 
                             <a asp-action="Delete" asp-route-id="@item.Id"
@@ -71,17 +79,3 @@
         </div>
     }
 </div>
-
-<!-- Floating Create Button -->
-<a asp-action="Create"
-   class="btn btn-fancy rounded-circle position-fixed d-flex align-items-center justify-content-center"
-   style="width:60px; height:60px; bottom:30px; right:30px; font-size:1.4rem; box-shadow:0 0 20px rgba(97,218,251,0.4);"
-   title="Create New Contact">
-    <i class="fa-solid fa-plus"></i>
-</a>
-
-@section Scripts {
-    <script>
-        document.querySelector('.container').classList.add('fade-in');
-    </script>
-}

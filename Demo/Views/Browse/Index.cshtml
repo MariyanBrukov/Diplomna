@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Browse Parts";
     var currentType = Model.Filter.PartType ?? Demo.Models.PartType.CPU;
+    var isAdmin = ViewBag.IsAdmin as bool? ?? false;
 }
 
 <div class="container py-3">
@@ -13,13 +14,17 @@
             <small class="text-white-50">View items by category and filter by price, brand, and capability.</small>
         </div>
 
-        <div class="d-flex gap-2">
-            <a class="btn btn-info text-dark fw-semibold"
-               asp-action="Create"
-               asp-route-partType="@currentType">
-                + Add New Item
-            </a>
-        </div>
+        <!-- ✅ ONLY ADMIN CAN SEE CREATE -->
+        @if (isAdmin)
+        {
+            <div class="d-flex gap-2">
+                <a class="btn btn-info text-dark fw-semibold"
+                   asp-action="Create"
+                   asp-route-partType="@currentType">
+                    + Add New Item
+                </a>
+            </div>
+        }
     </div>
 
     <!-- Part type tabs -->
@@ -111,12 +116,16 @@
                                             Details
                                         </a>
 
-                                        <a class="btn btn-sm btn-outline-secondary"
-                                           asp-action="Edit"
-                                           asp-route-partType="@item.PartType"
-                                           asp-route-id="@item.Id">
-                                            Edit
-                                        </a>
+                                        <!-- ✅ ONLY ADMIN CAN SEE EDIT -->
+                                        @if (isAdmin)
+                                        {
+                                            <a class="btn btn-sm btn-outline-warning"
+                                               asp-action="Edit"
+                                               asp-route-partType="@item.PartType"
+                                               asp-route-id="@item.Id">
+                                                Edit
+                                            </a>
+                                        }
                                     </div>
                                 </div>
                             </div>

@@ -1,48 +1,75 @@
 ﻿@model Demo.Models.Contact
 @{
-    ViewData["Title"] = "Delete Contact";
+    ViewData["Title"] = "Delete Ticket";
 }
 
-<div class="d-flex justify-content-center align-items-center fade-in" style="min-height:80vh;">
-    <div class="card card-glow p-5 text-center" style="max-width:500px; width:100%;">
-        <h2 class="text-danger fw-bold mb-3">
-            <i class="fa-solid fa-triangle-exclamation"></i> Confirm Deletion
-        </h2>
-        <p class="text-light mb-4">Are you sure you want to permanently delete this contact?</p>
+<div class="container py-5 fade-in">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-7">
 
-        <div class="text-start bg-dark border border-secondary rounded-3 p-3 mb-4">
-            <p class="mb-2">
-                <strong class="text-info">Name:</strong>
-                <span class="text-light">@Model.Name</span>
-            </p>
-            <p class="mb-2">
-                <strong class="text-info">Email:</strong>
-                <span class="text-light">@Model.Email</span>
-            </p>
-            <p class="mb-2">
-                <strong class="text-info">Subject:</strong>
-                <span class="text-light">@Model.Subject</span>
-            </p>
-            <p class="mb-0">
-                <strong class="text-info">Message:</strong>
-                <span class="text-light">@Model.Message</span>
-            </p>
+            <div class="card card-glow p-4 p-md-5 text-center">
+                <h2 class="text-danger fw-bold mb-3">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Delete Ticket
+                </h2>
+
+                <p class="text-light mb-4">
+                    Are you sure you want to permanently delete this support ticket?
+                </p>
+
+                <div class="bg-dark border border-secondary rounded-3 p-4 mb-4 text-start">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <div>
+                            @if (Model.IsAnswered)
+                            {
+                                <span class="badge bg-success">Answered</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            }
+                        </div>
+
+                        <div class="text-white-50 small">
+                            @Model.CreatedAt.ToString("f")
+                        </div>
+                    </div>
+
+                    <p class="mb-2">
+                        <strong class="text-info">Name:</strong>
+                        <span class="text-light">@Model.Name</span>
+                    </p>
+
+                    <p class="mb-2">
+                        <strong class="text-info">Email:</strong>
+                        <span class="text-light">@Model.Email</span>
+                    </p>
+
+                    <p class="mb-2">
+                        <strong class="text-info">Subject:</strong>
+                        <span class="text-light">@Model.Subject</span>
+                    </p>
+
+                    <div class="mb-0">
+                        <strong class="text-info">Message:</strong>
+                        <div class="text-light mt-2" style="white-space:pre-wrap;">@Model.Message</div>
+                    </div>
+                </div>
+
+                <form asp-action="Delete" method="post" class="d-flex justify-content-center gap-3 flex-wrap">
+                    <input type="hidden" asp-for="Id" />
+
+                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-light px-4 rounded-pill">
+                        <i class="fa-solid fa-arrow-left"></i> Cancel
+                    </a>
+
+                    <button type="submit"
+                            class="btn btn-danger px-4 rounded-pill"
+                            style="box-shadow: 0 0 25px rgba(255, 77, 77, 0.35);">
+                        <i class="fa-solid fa-trash"></i> Delete Ticket
+                    </button>
+                </form>
+            </div>
+
         </div>
-
-        <form asp-action="Delete" method="post" class="d-flex justify-content-center gap-3">
-            <input type="hidden" asp-for="Id" />
-            <a asp-action="Index" class="btn btn-outline-light px-4 rounded-pill">
-                <i class="fa-solid fa-arrow-left"></i> Cancel
-            </a>
-            <button type="submit" class="btn btn-danger px-4 rounded-pill" style="box-shadow: 0 0 25px rgba(255, 77, 77, 0.4);">
-                <i class="fa-solid fa-trash"></i> Delete
-            </button>
-        </form>
     </div>
 </div>
-
-@section Scripts {
-    <script>
-        document.querySelector('.card-glow').classList.add('fade-in');
-    </script>
-}

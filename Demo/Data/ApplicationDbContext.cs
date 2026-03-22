@@ -41,6 +41,18 @@ namespace Demo.Models
                 .HasForeignKey(b => b.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    Id = 999,
+                    Username = "admin",
+                    Email = "admin@pcjunkie.com",
+                    Password = "admin123",
+                    IsAdmin = true,
+                    DateCreated = new DateTime(2026, 3, 22)
+                }
+            );
+
             // CPUs
             modelBuilder.Entity<CPU>().HasData(
                 new CPU { Id = 1, Name = "Intel Core i5-12400F", Socket = "LGA1700", Cores = 6, ClockSpeedGHz = 2.5f, Price = 160 },

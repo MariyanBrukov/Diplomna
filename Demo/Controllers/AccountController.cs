@@ -51,14 +51,14 @@ namespace Demo.Controllers
             {
                 Username = model.Username,
                 Email = model.Email,
-                Password = model.Password // TODO: hash in production
+                Password = model.Password,
+                IsAdmin = false
             };
 
             _context.Users.Add(user);
             _context.SaveChanges();
 
-            HttpContext.Session.SetInt32("UserId", user.Id);
-            HttpContext.Session.SetString("Username", user.Username);
+            SignInUser(user);
 
             return RedirectToAction("Index", "Home");
         }
@@ -90,8 +90,35 @@ namespace Demo.Controllers
                 return View(model);
             }
 
-            HttpContext.Session.SetInt32("UserId", user.Id);
-            HttpContext.Session.SetString("Username", user.Username);
+            SignInUser(user);
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        // POST: /Account/AdminLogin
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AdminLogin(LoginViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["AdminLoginError"] = "Invalid admin login.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            var admin = _context.Users
+                .FirstOrDefault(u =>
+                    u.Email == model.Email &&
+                    u.Password == model.Password &&
+                    u.IsAdmin);
+
+            if (admin == null)
+            {
+                TempData["AdminLoginError"] = "Invalid admin credentials.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            SignInUser(admin);
 
             return RedirectToAction("Index", "Home");
         }
@@ -101,6 +128,13 @@ namespace Demo.Controllers
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
+        }
+
+        private void SignInUser(User user)
+        {
+            HttpContext.Session.SetInt32("UserId", user.Id);
+            HttpContext.Session.SetString("Username", user.Username);
+            HttpContext.Session.SetString("IsAdmin", user.IsAdmin.ToString());
         }
     }
 }
