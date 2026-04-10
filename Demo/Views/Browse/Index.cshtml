@@ -308,7 +308,8 @@
 
     .admin-btn,
     .browse-btn-main,
-    .browse-btn-outline {
+    .browse-btn-outline,
+    .browse-btn-danger {
         border-radius: 999px;
         font-weight: 800;
         transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease, background .22s ease;
@@ -341,6 +342,22 @@
             transform: translateY(-3px);
             border-color: rgba(97, 218, 251, 0.52);
             box-shadow: 0 0 26px rgba(97, 218, 251, 0.12);
+        }
+
+    .browse-btn-danger {
+        background: rgba(220, 53, 69, 0.10);
+        color: #ffb3bd !important;
+        border: 1px solid rgba(220, 53, 69, 0.45);
+        padding: .72rem 1.1rem;
+        text-decoration: none;
+    }
+
+        .browse-btn-danger:hover {
+            transform: translateY(-3px);
+            color: white !important;
+            background: rgba(220, 53, 69, 0.18);
+            border-color: rgba(220, 53, 69, 0.75);
+            box-shadow: 0 0 26px rgba(220, 53, 69, 0.18);
         }
 
     .type-tabs {
@@ -722,7 +739,8 @@
         }
 
         .card-actions .browse-btn-outline,
-        .card-actions .browse-btn-main {
+        .card-actions .browse-btn-main,
+        .card-actions .browse-btn-danger {
             width: 100%;
             text-align: center;
         }
@@ -818,8 +836,8 @@
         <div class="type-tabs reveal">
             @foreach (Demo.Models.PartType t in Enum.GetValues(typeof(Demo.Models.PartType)))
             {
-                var isActive = currentType == t;
-                <a class="type-pill @(isActive ? "active" : "")"
+                var activeTab = currentType == t;
+                <a class="type-pill @(activeTab ? "active" : "")"
                    asp-action="Index"
                    asp-route-partType="@t">
                     <i class="fa-solid fa-microchip"></i>
@@ -880,8 +898,7 @@
 
                                         @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
                                         {
-                                            <img src="@item.ImageUrl"
-                                                 alt="@item.Name" />
+                                            <img src="@item.ImageUrl" alt="@item.Name" />
                                         }
                                         else
                                         {
@@ -938,6 +955,14 @@
                                                    asp-route-id="@item.Id">
                                                     <i class="fa-solid fa-pen-to-square me-2"></i>
                                                     Edit
+                                                </a>
+
+                                                <a class="browse-btn-danger"
+                                                   asp-action="Delete"
+                                                   asp-route-partType="@item.PartType"
+                                                   asp-route-id="@item.Id">
+                                                    <i class="fa-solid fa-trash me-2"></i>
+                                                    Delete
                                                 </a>
                                             }
                                         </div>

@@ -1,0 +1,118 @@
+﻿@model Demo.Models.ViewModels.Browse.PartDetailsVm
+
+@{
+    ViewData["Title"] = $"Delete {Model.PartType}";
+    var isAdmin = ViewBag.IsAdmin as bool? ?? false;
+}
+
+<div class="container py-4" style="color:#e9ecef;">
+    <div class="mb-3 d-flex flex-wrap gap-2">
+        <a asp-action="Index"
+           asp-route-partType="@Model.PartType"
+           class="btn btn-outline-info">
+            ← Back to Browse
+        </a>
+
+        <a asp-action="Details"
+           asp-route-partType="@Model.PartType"
+           asp-route-id="@Model.Id"
+           class="btn btn-outline-secondary">
+            View Details
+        </a>
+    </div>
+
+    <div class="card box-shadow" style="background:#111827; border:1px solid rgba(255,255,255,.12);">
+        <div class="card-body">
+            <h2 class="mb-2" style="color:#ff6b81;">Delete @Model.PartType</h2>
+            <div class="text-white-50 mb-4">
+                You are about to remove this item from Browse. This will soft-delete it by making it inactive.
+            </div>
+
+            <div class="row g-4">
+                <div class="col-12 col-lg-5">
+                    @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl"
+                             alt="@Model.Name"
+                             class="img-fluid rounded border"
+                             style="border-color:rgba(255,255,255,.15)!important;" />
+                    }
+                    else
+                    {
+                        <div class="d-flex align-items-center justify-content-center rounded"
+                             style="height:320px; background:#0b1220; border:1px dashed rgba(255,255,255,.25);">
+                            <span class="text-white-50">No image</span>
+                        </div>
+                    }
+                </div>
+
+                <div class="col-12 col-lg-7">
+                    <h3 class="mb-2" style="color:#61dafb;">@Model.Name</h3>
+                    <div class="text-white-50 mb-2">@Model.Brand</div>
+                    <div class="fs-4 fw-bold mb-3">$@Model.Price</div>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.Description))
+                    {
+                        <div class="mb-3 p-3 rounded"
+                             style="background:#0b1220; border:1px solid rgba(255,255,255,.10);">
+                            <div class="fw-semibold mb-2" style="color:#61dafb;">Description</div>
+                            <div class="text-white-50">@Model.Description</div>
+                        </div>
+                    }
+
+                    @if (Model.Specs != null && Model.Specs.Count > 0)
+                    {
+                        <div class="mb-3">
+                            <div class="fw-semibold mb-2" style="color:#61dafb;">Specifications</div>
+                            <div class="table-responsive">
+                                <table class="table table-dark table-bordered align-middle mb-0"
+                                       style="--bs-table-bg:#0b1220; --bs-table-border-color:rgba(255,255,255,.1);">
+                                    <tbody>
+                                        @foreach (var spec in Model.Specs)
+                                        {
+                                            <tr>
+                                                <th style="width:40%; color:#61dafb;">@spec.Key</th>
+                                                <td>@spec.Value</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+
+                    @if (isAdmin)
+                    {
+                        <div class="alert alert-danger mt-4 mb-0"
+                             style="background:rgba(220,53,69,.12); border:1px solid rgba(220,53,69,.35); color:#ffd7dd;">
+                            This action will hide the item from Browse.
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @if (isAdmin)
+            {
+                <form asp-action="DeleteConfirmed" method="post" class="mt-4">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="partType" value="@Model.PartType" />
+                    <input type="hidden" name="id" value="@Model.Id" />
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fa-solid fa-trash me-2"></i>
+                            Confirm Delete
+                        </button>
+
+                        <a asp-action="Details"
+                           asp-route-partType="@Model.PartType"
+                           asp-route-id="@Model.Id"
+                           class="btn btn-outline-light">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            }
+        </div>
+    </div>
+</div>

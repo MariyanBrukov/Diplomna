@@ -54,12 +54,10 @@ namespace Demo.Controllers
 
             var details = await LoadDetailsAsync(partType, id);
             if (details == null) return NotFound();
+
             return View(details);
         }
 
-        // ---------------------------
-        // CREATE (GET)
-        // ---------------------------
         [HttpGet]
         public IActionResult Create(PartType partType)
         {
@@ -69,9 +67,6 @@ namespace Demo.Controllers
             return View(new CreatePartVm { PartType = partType });
         }
 
-        // ---------------------------
-        // CREATE (POST) + Upload
-        // ---------------------------
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreatePartVm vm)
@@ -105,6 +100,7 @@ namespace Demo.Controllers
                         Price = vm.Price,
                         Description = vm.Description,
                         ImageUrl = vm.ImageUrl,
+                        IsActive = true,
                         Socket = vm.Socket ?? "",
                         Cores = vm.Cores ?? 0,
                         ClockSpeedGHz = vm.ClockSpeedGHz ?? 0
@@ -119,6 +115,7 @@ namespace Demo.Controllers
                         Price = vm.Price,
                         Description = vm.Description,
                         ImageUrl = vm.ImageUrl,
+                        IsActive = true,
                         MemoryGB = vm.MemoryGB ?? 0,
                         Chipset = vm.Chipset ?? ""
                     });
@@ -132,6 +129,7 @@ namespace Demo.Controllers
                         Price = vm.Price,
                         Description = vm.Description,
                         ImageUrl = vm.ImageUrl,
+                        IsActive = true,
                         CapacityGB = vm.CapacityGB ?? 0,
                         Type = vm.RamType ?? "",
                         SpeedMHz = vm.SpeedMHz ?? 0
@@ -146,6 +144,7 @@ namespace Demo.Controllers
                         Price = vm.Price,
                         Description = vm.Description,
                         ImageUrl = vm.ImageUrl,
+                        IsActive = true,
                         Socket = vm.Socket ?? "",
                         FormFactor = vm.FormFactor ?? ""
                     });
@@ -159,6 +158,7 @@ namespace Demo.Controllers
                         Price = vm.Price,
                         Description = vm.Description,
                         ImageUrl = vm.ImageUrl,
+                        IsActive = true,
                         Wattage = vm.Wattage ?? 0,
                         Efficiency = vm.Efficiency ?? ""
                     });
@@ -172,6 +172,7 @@ namespace Demo.Controllers
                         Price = vm.Price,
                         Description = vm.Description,
                         ImageUrl = vm.ImageUrl,
+                        IsActive = true,
                         Type = vm.StorageType ?? "",
                         CapacityGB = vm.CapacityGB ?? 0
                     });
@@ -185,6 +186,7 @@ namespace Demo.Controllers
                         Price = vm.Price,
                         Description = vm.Description,
                         ImageUrl = vm.ImageUrl,
+                        IsActive = true,
                         FormFactor = vm.FormFactor ?? "",
                         Color = vm.Color ?? ""
                     });
@@ -198,9 +200,6 @@ namespace Demo.Controllers
             return RedirectToAction(nameof(Index), new { partType = vm.PartType });
         }
 
-        // ---------------------------
-        // EDIT (GET)
-        // ---------------------------
         [HttpGet]
         public async Task<IActionResult> Edit(PartType partType, int id)
         {
@@ -209,12 +208,10 @@ namespace Demo.Controllers
 
             var vm = await LoadEditVmAsync(partType, id);
             if (vm == null) return NotFound();
+
             return View(vm);
         }
 
-        // ---------------------------
-        // EDIT (POST) + Upload
-        // ---------------------------
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditPartVm vm)
@@ -356,6 +353,46 @@ namespace Demo.Controllers
 
             await _db.SaveChangesAsync();
             return RedirectToAction(nameof(Details), new { partType = vm.PartType, id = vm.Id });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(PartType partType, int id)
+        {
+            if (!IsAdmin())
+                return RedirectToAction("Login", "Account");
+
+            ViewBag.IsAdmin = true;
+
+            var details = await LoadDetailsForDeleteAsync(partType, id);
+            if (details == null) return NotFound();
+
+            return View(details);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(PartType partType, int id)
+        {
+            if (!IsAdmin())
+                return RedirectToAction("Login", "Account");
+
+            bool deleted = partType switch
+            {
+                PartType.CPU => await SoftDeleteCpu(id),
+                PartType.GPU => await SoftDeleteGpu(id),
+                PartType.RAM => await SoftDeleteRam(id),
+                PartType.Motherboard => await SoftDeleteMotherboard(id),
+                PartType.PowerSupply => await SoftDeletePowerSupply(id),
+                PartType.Storage => await SoftDeleteStorage(id),
+                PartType.Case => await SoftDeleteCase(id),
+                _ => false
+            };
+
+            if (!deleted)
+                return NotFound();
+
+            await _db.SaveChangesAsync();
+            return RedirectToAction(nameof(Index), new { partType });
         }
 
         private bool IsAdmin()
@@ -744,6 +781,11 @@ namespace Demo.Controllers
             }
         }
 
+        private async Task<PartDetailsVm?> LoadDetailsForDeleteAsync(PartType partType, int id)
+        {
+            return await LoadDetailsAsync(partType, id);
+        }
+
         private async Task<EditPartVm?> LoadEditVmAsync(PartType partType, int id)
         {
             switch (partType)
@@ -886,6 +928,62 @@ namespace Demo.Controllers
                 default:
                     return null;
             }
+        }
+
+        private async Task<bool> SoftDeleteCpu(int id)
+        {
+            var x = await _db.CPUs.FirstOrDefaultAsync(p => p.Id == id && p.IsActive);
+            if (x == null) return false;
+            x.IsActive = false;
+            return true;
+        }
+
+        private async Task<bool> SoftDeleteGpu(int id)
+        {
+            var x = await _db.GPUs.FirstOrDefaultAsync(p => p.Id == id && p.IsActive);
+            if (x == null) return false;
+            x.IsActive = false;
+            return true;
+        }
+
+        private async Task<bool> SoftDeleteRam(int id)
+        {
+            var x = await _db.RAMs.FirstOrDefaultAsync(p => p.Id == id && p.IsActive);
+            if (x == null) return false;
+            x.IsActive = false;
+            return true;
+        }
+
+        private async Task<bool> SoftDeleteMotherboard(int id)
+        {
+            var x = await _db.Motherboards.FirstOrDefaultAsync(p => p.Id == id && p.IsActive);
+            if (x == null) return false;
+            x.IsActive = false;
+            return true;
+        }
+
+        private async Task<bool> SoftDeletePowerSupply(int id)
+        {
+            var x = await _db.PowerSupplies.FirstOrDefaultAsync(p => p.Id == id && p.IsActive);
+            if (x == null) return false;
+            x.IsActive = false;
+            return true;
+        }
+
+        private async Task<bool> SoftDeleteStorage(int id)
+        {
+            var x = await _db.Storages.FirstOrDefaultAsync(p => p.Id == id && p.IsActive);
+            if (x == null) return false;
+            x.IsActive = false;
+            return true;
+        }
+
+        private async Task<bool> SoftDeleteCase(int id)
+        {
+            var x = await _db.Cases.FirstOrDefaultAsync(p => p.Id == id && p.IsActive);
+            if (x == null) return false;
+            x.IsActive = false;
+            return true;
         }
 
         private async Task<string> SavePartImageAsync(PartType partType, IFormFile file)

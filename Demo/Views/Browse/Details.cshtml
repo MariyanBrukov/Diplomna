@@ -2,10 +2,10 @@
 
 @{
     ViewData["Title"] = $"{Model.PartType} Details";
+    var isAdmin = ViewBag.IsAdmin as bool? ?? false;
 }
 
 <style>
-    /* Description */
     .desc-card {
         background: rgba(255,255,255,.03);
         border: 1px solid rgba(255,255,255,.10);
@@ -37,10 +37,9 @@
         margin-left: 8px;
         color: rgba(233,236,239,.80);
         line-height: 1.65;
-        white-space: pre-line; /* keeps new lines from DB */
+        white-space: pre-line;
     }
 
-    /* Small label pills under title */
     .meta-pill {
         display: inline-flex;
         align-items: center;
@@ -60,12 +59,22 @@
             ← Back
         </a>
 
-        <a asp-action="Edit"
-           asp-route-partType="@Model.PartType"
-           asp-route-id="@Model.Id"
-           class="btn btn-outline-secondary">
-            Edit
-        </a>
+        @if (isAdmin)
+        {
+            <a asp-action="Edit"
+               asp-route-partType="@Model.PartType"
+               asp-route-id="@Model.Id"
+               class="btn btn-outline-secondary">
+                Edit
+            </a>
+
+            <a asp-action="Delete"
+               asp-route-partType="@Model.PartType"
+               asp-route-id="@Model.Id"
+               class="btn btn-outline-danger">
+                Delete
+            </a>
+        }
     </div>
 
     <div class="card box-shadow" style="background:#111827; border:1px solid rgba(255,255,255,.12);">
@@ -101,7 +110,6 @@
 
                     <div class="fs-4 fw-bold mb-3">$@Model.Price</div>
 
-                    <!-- Nicer Description -->
                     <div class="desc-card mt-2">
                         <div class="desc-title">Description</div>
                         @if (!string.IsNullOrWhiteSpace(Model.Description))

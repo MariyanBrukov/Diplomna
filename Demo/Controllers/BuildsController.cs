@@ -17,7 +17,6 @@ namespace Demo.Controllers
             _context = context;
         }
 
-        // GET: Builds
         public async Task<IActionResult> Index()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -37,7 +36,6 @@ namespace Demo.Controllers
             return View(await builds.ToListAsync());
         }
 
-        // GET: Builds/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -63,7 +61,6 @@ namespace Demo.Controllers
             return View(build);
         }
 
-        // GET: Builds/Create
         public IActionResult Create()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -74,7 +71,6 @@ namespace Demo.Controllers
             return View();
         }
 
-        // POST: Builds/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,BuildName,CPUId,GPUId,MotherboardId,RAMId,StorageId,PowerSupplyId,CaseId")] Build build)
@@ -88,7 +84,7 @@ namespace Demo.Controllers
                 build.UserId = userId.Value;
                 build.TotalPrice = await CalculateTotalPrice(build);
 
-                _context.Add(build);
+                _context.Builds.Add(build);
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
@@ -98,7 +94,6 @@ namespace Demo.Controllers
             return View(build);
         }
 
-        // GET: Builds/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -118,7 +113,6 @@ namespace Demo.Controllers
             return View(build);
         }
 
-        // POST: Builds/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,BuildName,CPUId,GPUId,MotherboardId,RAMId,StorageId,PowerSupplyId,CaseId")] Build build)
@@ -144,7 +138,7 @@ namespace Demo.Controllers
                     build.UserId = userId.Value;
                     build.TotalPrice = await CalculateTotalPrice(build);
 
-                    _context.Update(build);
+                    _context.Builds.Update(build);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -162,7 +156,6 @@ namespace Demo.Controllers
             return View(build);
         }
 
-        // GET: Builds/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -188,7 +181,6 @@ namespace Demo.Controllers
             return View(build);
         }
 
-        // POST: Builds/DeleteConfirmed/5
         [HttpPost, ActionName("DeleteConfirmed")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -211,26 +203,111 @@ namespace Demo.Controllers
 
         private void PopulateDropdowns(Build? build = null)
         {
-            ViewData["CPUId"] = new SelectList(_context.CPUs, "Id", "Name", build?.CPUId);
-            ViewData["GPUId"] = new SelectList(_context.GPUs, "Id", "Name", build?.GPUId);
-            ViewData["MotherboardId"] = new SelectList(_context.Motherboards, "Id", "Name", build?.MotherboardId);
-            ViewData["RAMId"] = new SelectList(_context.RAMs, "Id", "Name", build?.RAMId);
-            ViewData["StorageId"] = new SelectList(_context.Storages, "Id", "Name", build?.StorageId);
-            ViewData["PowerSupplyId"] = new SelectList(_context.PowerSupplies, "Id", "Name", build?.PowerSupplyId);
-            ViewData["CaseId"] = new SelectList(_context.Cases, "Id", "Name", build?.CaseId);
+            var selectedCpuId = build?.CPUId;
+            var selectedGpuId = build?.GPUId;
+            var selectedMotherboardId = build?.MotherboardId;
+            var selectedRamId = build?.RAMId;
+            var selectedStorageId = build?.StorageId;
+            var selectedPowerSupplyId = build?.PowerSupplyId;
+            var selectedCaseId = build?.CaseId;
+
+            var cpus = _context.CPUs
+                .AsNoTracking()
+                .Where(x => x.IsActive || (selectedCpuId.HasValue && x.Id == selectedCpuId.Value))
+                .OrderBy(x => x.Name)
+                .Select(x => new
+                {
+                    x.Id,
+                    Display = x.Name + "|" + x.Price
+                })
+                .ToList();
+
+            var gpus = _context.GPUs
+                .AsNoTracking()
+                .Where(x => x.IsActive || (selectedGpuId.HasValue && x.Id == selectedGpuId.Value))
+                .OrderBy(x => x.Name)
+                .Select(x => new
+                {
+                    x.Id,
+                    Display = x.Name + "|" + x.Price
+                })
+                .ToList();
+
+            var motherboards = _context.Motherboards
+                .AsNoTracking()
+                .Where(x => x.IsActive || (selectedMotherboardId.HasValue && x.Id == selectedMotherboardId.Value))
+                .OrderBy(x => x.Name)
+                .Select(x => new
+                {
+                    x.Id,
+                    Display = x.Name + "|" + x.Price
+                })
+                .ToList();
+
+            var rams = _context.RAMs
+                .AsNoTracking()
+                .Where(x => x.IsActive || (selectedRamId.HasValue && x.Id == selectedRamId.Value))
+                .OrderBy(x => x.Name)
+                .Select(x => new
+                {
+                    x.Id,
+                    Display = x.Name + "|" + x.Price
+                })
+                .ToList();
+
+            var storages = _context.Storages
+                .AsNoTracking()
+                .Where(x => x.IsActive || (selectedStorageId.HasValue && x.Id == selectedStorageId.Value))
+                .OrderBy(x => x.Name)
+                .Select(x => new
+                {
+                    x.Id,
+                    Display = x.Name + "|" + x.Price
+                })
+                .ToList();
+
+            var powerSupplies = _context.PowerSupplies
+                .AsNoTracking()
+                .Where(x => x.IsActive || (selectedPowerSupplyId.HasValue && x.Id == selectedPowerSupplyId.Value))
+                .OrderBy(x => x.Name)
+                .Select(x => new
+                {
+                    x.Id,
+                    Display = x.Name + "|" + x.Price
+                })
+                .ToList();
+
+            var cases = _context.Cases
+                .AsNoTracking()
+                .Where(x => x.IsActive || (selectedCaseId.HasValue && x.Id == selectedCaseId.Value))
+                .OrderBy(x => x.Name)
+                .Select(x => new
+                {
+                    x.Id,
+                    Display = x.Name + "|" + x.Price
+                })
+                .ToList();
+
+            ViewData["CPUId"] = new SelectList(cpus, "Id", "Display", selectedCpuId);
+            ViewData["GPUId"] = new SelectList(gpus, "Id", "Display", selectedGpuId);
+            ViewData["MotherboardId"] = new SelectList(motherboards, "Id", "Display", selectedMotherboardId);
+            ViewData["RAMId"] = new SelectList(rams, "Id", "Display", selectedRamId);
+            ViewData["StorageId"] = new SelectList(storages, "Id", "Display", selectedStorageId);
+            ViewData["PowerSupplyId"] = new SelectList(powerSupplies, "Id", "Display", selectedPowerSupplyId);
+            ViewData["CaseId"] = new SelectList(cases, "Id", "Display", selectedCaseId);
         }
 
         private async Task<decimal> CalculateTotalPrice(Build build)
         {
             decimal total = 0;
 
-            var cpu = await _context.CPUs.FindAsync(build.CPUId);
-            var gpu = await _context.GPUs.FindAsync(build.GPUId);
-            var mb = await _context.Motherboards.FindAsync(build.MotherboardId);
-            var ram = await _context.RAMs.FindAsync(build.RAMId);
-            var storage = await _context.Storages.FindAsync(build.StorageId);
-            var ps = await _context.PowerSupplies.FindAsync(build.PowerSupplyId);
-            var pcCase = await _context.Cases.FindAsync(build.CaseId);
+            var cpu = await _context.CPUs.FirstOrDefaultAsync(x => x.Id == build.CPUId && x.IsActive);
+            var gpu = await _context.GPUs.FirstOrDefaultAsync(x => x.Id == build.GPUId && x.IsActive);
+            var mb = await _context.Motherboards.FirstOrDefaultAsync(x => x.Id == build.MotherboardId && x.IsActive);
+            var ram = await _context.RAMs.FirstOrDefaultAsync(x => x.Id == build.RAMId && x.IsActive);
+            var storage = await _context.Storages.FirstOrDefaultAsync(x => x.Id == build.StorageId && x.IsActive);
+            var ps = await _context.PowerSupplies.FirstOrDefaultAsync(x => x.Id == build.PowerSupplyId && x.IsActive);
+            var pcCase = await _context.Cases.FirstOrDefaultAsync(x => x.Id == build.CaseId && x.IsActive);
 
             if (cpu != null) total += cpu.Price;
             if (gpu != null) total += gpu.Price;
